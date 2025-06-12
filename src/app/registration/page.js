@@ -35,6 +35,7 @@ export default function RegistrationController() {
 		case 4:
 			content = <CreatePassword onNext={() => setStep(step + 1)} />;
 			break;
+		
 		default:
 			content = null;
 	}
