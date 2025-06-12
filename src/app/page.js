@@ -25,7 +25,7 @@ export default function Home() {
           <button className="border border-white rounded-full px-16 py-3 uppercase w-64">
             Accedi
           </button>
-          <Link href="/registrazione">
+          <Link href="/registration">
             <button 
             type="button"
             className="border border-white rounded-full px-16 py-3 uppercase w-64 hover:bg-white">

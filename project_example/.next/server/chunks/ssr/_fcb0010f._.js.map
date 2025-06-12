@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 6, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
+    {"offset": {"line": 24, "column": 0}, "map": {"version":3,"sources":["file:///Users/filippo/dev/tindoog/tindoog/src/app/page.js"],"sourcesContent":["import Image from \"next/image\";\n\nexport default function Home() {\n  return <div>ciao</div>;\n}\n"],"names":[],"mappings":";;;;AAAA;;;AAEe,SAAS;IACtB,qBAAO,6WAAC;kBAAI;;;;;;AACd","debugId":null}}]
+}
