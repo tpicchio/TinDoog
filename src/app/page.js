@@ -11,6 +11,7 @@ export default function Home() {
           alt="Tindoog icon"
           width={100}
           height={100}
+		  style={{ height: "auto", width: "auto" }}
           />
           <h1 className="font-semibold text-5xl">TinDoog</h1>
         </div>
@@ -22,13 +23,15 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col items-center gap-4">
-          <button className="border border-white rounded-full px-16 py-3 uppercase w-64">
-            Accedi
-          </button>
+          <Link href="/login">
+            <button className="border border-white text-white rounded-full px-16 py-3 uppercase w-64 hover:bg-white hover:text-[#AA54EA] transition-colors">
+              Accedi
+            </button>
+          </Link>
           <Link href="/registration">
             <button 
             type="button"
-            className="border border-white rounded-full px-16 py-3 uppercase w-64 hover:bg-white">
+            className="border border-white text-white rounded-full px-16 py-3 uppercase w-64 hover:bg-white hover:text-[#AA54EA] transition-colors">
               Registrati
             </button>
           </Link>

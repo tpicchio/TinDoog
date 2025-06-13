@@ -1,8 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 6, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
-    {"offset": {"line": 24, "column": 0}, "map": {"version":3,"sources":["file:///Users/filippo/dev/tindoog/tindoog/src/components/login-page.js"],"sourcesContent":["export function LoginPage(props) {\n  const appTitle = props.appTitle;\n\n  const uppercaseTitle = appTitle.toUpperCase();\n\n  return (\n    <div className=\"flex items-center h-full w-full justify-center flex-col gap-4\">\n      <h1>{uppercaseTitle}</h1>\n      <p>Clicca per accedere</p>\n      <button className=\"border p-2\">Accedi</button>\n      <button className=\"border p-2\">Registrati</button>\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;;AAAO,SAAS,UAAU,KAAK;IAC7B,MAAM,WAAW,MAAM,QAAQ;IAE/B,MAAM,iBAAiB,SAAS,WAAW;IAE3C,qBACE,6WAAC;QAAI,WAAU;;0BACb,6WAAC;0BAAI;;;;;;0BACL,6WAAC;0BAAE;;;;;;0BACH,6WAAC;gBAAO,WAAU;0BAAa;;;;;;0BAC/B,6WAAC;gBAAO,WAAU;0BAAa;;;;;;;;;;;;AAGrC","debugId":null}},
-    {"offset": {"line": 78, "column": 0}, "map": {"version":3,"sources":["file:///Users/filippo/dev/tindoog/tindoog/src/app/hello/page.js"],"sourcesContent":["import { LoginPage } from \"@/components/login-page\";\n\nexport default function Hello() {\n  return (\n    <div className=\"h-full\">\n      <LoginPage appTitle=\"Tindoog\"></LoginPage>\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;AAAA;;;AAEe,SAAS;IACtB,qBACE,6WAAC;QAAI,WAAU;kBACb,cAAA,6WAAC,kIAAA,CAAA,YAAS;YAAC,UAAS;;;;;;;;;;;AAG1B","debugId":null}}]
-}

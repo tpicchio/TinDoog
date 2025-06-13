@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///Users/filippo/dev/tindoog/tindoog/src/components/counter.js"],"sourcesContent":["\"use client\";\n\nimport { useState } from \"react\";\nimport { Camera } from \"lucide-react\";\n\nexport function Counter() {\n  const [count, setCount] = useState(0);\n\n  return (\n    <div>\n      <Camera className=\"text-red-500\" />\n      <p>Conto: {count}</p>\n      <button\n        onClick={() => {\n          setCount(count + 1);\n        }}\n      >\n        Aumenta\n      </button>\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;AAEA;AACA;;;AAHA;;;AAKO,SAAS;;IACd,MAAM,CAAC,OAAO,SAAS,GAAG,CAAA,GAAA,4RAAA,CAAA,WAAQ,AAAD,EAAE;IAEnC,qBACE,4TAAC;;0BACC,4TAAC,6RAAA,CAAA,SAAM;gBAAC,WAAU;;;;;;0BAClB,4TAAC;;oBAAE;oBAAQ;;;;;;;0BACX,4TAAC;gBACC,SAAS;oBACP,SAAS,QAAQ;gBACnB;0BACD;;;;;;;;;;;;AAKP;GAhBgB;KAAA","debugId":null}}]
-}

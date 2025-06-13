@@ -42,7 +42,6 @@ export default function RegistrationController() {
 	return (
 		<div className="flex justify-center items-center h-screen w-screen bg-[#AA54EA]">
 			<div className="flex flex-col h-9/10 w-1/3 rounded-lg bg-white p-6 font-sans">
-				{/* Icona di chiusura in alto a sinistra */}
 				<div className="self-start">
 					<button
 						aria-label="Back"
