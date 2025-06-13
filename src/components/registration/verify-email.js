@@ -16,7 +16,7 @@ export function VerifyEmail({ onNext }) {
 		<input
 		  type="text"
 		  placeholder="Inserisci il codice di verifica"
-		  className="w-full border-0 border-b-2 border-gray-200 pb-2 text-2xl placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-purple-500 mt-4"
+		  className="w-full border-0 border-b-2 border-gray-200 pb-2 text-2xl text-black placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-purple-500 mt-4"
 		/>
 		<p className="mt-3 text-sm text-gray-500">
 		  Se non hai ricevuto il codice, controlla la tua cartella spam o richiedine un altro.

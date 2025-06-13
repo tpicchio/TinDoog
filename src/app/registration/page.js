@@ -1,39 +1,114 @@
 "use client";
 
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { IoIosArrowBack } from "react-icons/io";
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
-// Importa i componenti necessari per la registrazione
+// Components
 import { DogName } from '@/components/registration/dog-name';
 import { BreedSelection } from '@/components/registration/breed-selection';
 import { RegisterEmail } from '@/components/registration/register-email';
 import { VerifyEmail } from '@/components/registration/verify-email';
 import { CreatePassword } from '@/components/registration/create-password';
+import { LoadingScreen } from '@/components/utils/loading-screen';
 
 
 
 export default function RegistrationController() {
-	// This component will handle the registration flow
-	// and render the appropriate components based on the current step.
+	const { data: session, status } = useSession();
+	const router = useRouter();
 	const [step, setStep] = useState(0);
+	const [formData, setFormData] = useState({
+		dogName: '',
+		breed: '',
+		email: '',
+		password: ''
+	});
+
+	// Reindirizza se l'utente è già loggato
+	useEffect(() => {
+		if (status === 'authenticated') {
+			router.push('/dashboard');
+		}
+	}, [status, router]);
+
+	// Mostra loading durante la verifica della sessione
+	if (status === 'loading') {
+		return <LoadingScreen />;
+	}
+
+	// Non mostrare nulla se l'utente è autenticato (verrà reindirizzato)
+	if (status === 'authenticated') {
+		return null;
+	}
+
+	const updateFormData = (field, value) => {
+		setFormData(prev => ({ ...prev, [field]: value }));
+	};
+
+	const handleRegistration = async () => {
+		try {
+			const response = await fetch('/api/register', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(formData),
+			});
+
+			if (response.ok) {
+				// Redirect to login or automatically sign in
+				window.location.href = '/login';
+			} else {
+				const error = await response.json();
+				alert('Errore durante la registrazione: ' + error.message);
+			}
+		} catch (error) {
+			alert('Errore durante la registrazione: ' + error.message);
+		}
+	};
 
 	let content;
 	switch (step) {
 		case 0:
-			content = <DogName onNext={() => setStep(step + 1)} />;
+			content = <RegisterEmail 
+				value={formData.email}
+				onNext={(email) => {
+					updateFormData('email', email);
+					setStep(step + 1);
+				}} 
+			/>;
 			break;
 		case 1:
-			content = <BreedSelection onNext={() => setStep(step + 1)} />;
-			break;
-		case 2:
-			content = <RegisterEmail onNext={() => setStep(step + 1)} />;
-			break;
-		case 3:
 			content = <VerifyEmail onNext={() => setStep(step + 1)} />;
 			break;
+		case 2:
+			content = <DogName 
+			value={formData.dogName}
+			onNext={(name) => {
+				updateFormData('dogName', name);
+				setStep(step + 1);
+			}} 
+			/>;
+			break;
+		case 3:
+			content = <BreedSelection 
+			value={formData.breed}
+			onNext={(breed) => {
+				updateFormData('breed', breed);
+				setStep(step + 1);
+			}} 
+			/>;
+			break;
 		case 4:
-			content = <CreatePassword onNext={() => setStep(step + 1)} />;
+			content = <CreatePassword 
+				onNext={(password) => {
+					updateFormData('password', password);
+					handleRegistration();
+				}} 
+			/>;
 			break;
 		
 		default:

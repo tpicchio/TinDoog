@@ -26,7 +26,7 @@ export function Login() {
       if (result?.error) {
         setError('Email o password non corretti')
       } else {
-        router.push('/') // Reindirizza alla home
+        router.push('/dashboard') // Reindirizza alla home
       }
     } catch (error) {
       setError('Errore durante il login')

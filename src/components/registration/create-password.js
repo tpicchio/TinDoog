@@ -32,14 +32,14 @@ export function CreatePassword({ onNext }) {
 				<input
 					type="password"
 					placeholder="Inserisci la tua password"
-					className="w-full border-0 border-b-2 border-gray-200 pb-2 text-2xl placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-purple-500"
+					className="w-full border-0 border-b-2 border-gray-200 pb-2 text-2xl text-black placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-purple-500"
 					value={password}
 					onChange={e => setPassword(e.target.value)}
 				/>
 				<input
 					type="password"
 					placeholder="Conferma la tua password"
-					className="w-full border-0 border-b-2 border-gray-200 pb-2 text-2xl placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-purple-500 mt-6"
+					className="w-full border-0 border-b-2 border-gray-200 pb-2 text-2xl text-black placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-purple-500 mt-6"
 					value={confirmPassword}
 					onChange={e => setConfirmPassword(e.target.value)}
 				/>
