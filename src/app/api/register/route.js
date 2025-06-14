@@ -8,6 +8,8 @@ export async function POST(request) {
   try {
     const { dogName, breed, email, password } = await request.json();
 
+    console.log('Dati ricevuti dall\'API:', { dogName, breed, email, password: password ? '***' : 'undefined' }); // Debug
+
     // Validazione dei dati
     if (!dogName || !breed || !email || !password) {
       return NextResponse.json(

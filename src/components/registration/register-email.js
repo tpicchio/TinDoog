@@ -55,7 +55,7 @@ export function RegisterEmail({ value = '', onNext }) {
     
     if (exists) {
       setEmailExists(true);
-      setError('Questa email è già registrata');
+      setError('Questa email è già registrata, ');
       return;
     }
 
@@ -90,15 +90,20 @@ export function RegisterEmail({ value = '', onNext }) {
 		
 		{/* Messaggio di errore */}
 		{error && (
-		  <div className="mt-3">
-		    <p className="text-sm text-red-500">{error}</p>
-		    {emailExists && (
-		      <button
-		        onClick={goToLogin}
-		        className="mt-2 text-sm text-[#A744E6] hover:text-purple-700 underline font-medium"
-		      >
-		        Vai al login
-		      </button>
+		  <div className="mt-3 mb-8">
+		    {emailExists ? (
+		      <p className="text-sm text-red-500">
+		        {error}
+		        <button
+		          onClick={goToLogin}
+		          className="ml-1 text-[#A744E6] hover:text-purple-700 underline font-medium"
+		        >
+		        vai al login
+		        </button>
+		        <span> per accedere.</span>
+		      </p>
+		    ) : (
+		      <p className="text-sm text-red-500">{error}</p>
 		    )}
 		  </div>
 		)}

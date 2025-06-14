@@ -27,7 +27,7 @@ export default function Dashboard() {
 
   // Loading state
   if (status === 'loading') {
-    return <LoadingScreen />
+    return <LoadingScreen message="Caricamento..." />
   }
 
   // Non mostrare nulla se non autenticato (verrà reindirizzato)

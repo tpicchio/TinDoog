@@ -56,9 +56,10 @@ export function CreatePassword({ onNext }) {
 				<button
 					type="button"
 					onClick={handleContinue}
-					className="w-full bg-[#A744E6] text-white font-semibold py-4 rounded-full text-base tracking-wide hover:bg-purple-700 transition"
+					disabled={isRegistering}
+					className="w-full bg-[#A744E6] text-white font-semibold py-4 rounded-full text-base tracking-wide hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
 				>
-					CONTINUA
+					{isRegistering ? 'REGISTRAZIONE...' : 'CONTINUA'}
 				</button>
 			</div>
 		</>

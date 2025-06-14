@@ -1,36 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# TinDoog 🐕💜
 
-## Getting Started
+Un'app di incontri per cani costruita con Next.js, NextAuth.js, Prisma e SQLite.
 
-First, run the development server:
+## 🚀 Setup del progetto
+
+### 1. Installa le dipendenze
+```bash
+npm install
+```
+
+### 2. Configura le variabili d'ambiente
+```bash
+# Copia il template delle variabili d'ambiente
+cp .env.example .env
+
+# Modifica .env con le tue chiavi API
+```
+
+### 3. Configura il database
+```bash
+# Genera il client Prisma
+npx prisma generate
+
+# Sincronizza il database
+npx prisma db push
+```
+
+### 4. Ottieni le API Keys
+
+#### Resend (per invio email OTP)
+1. Vai su [resend.com](https://resend.com)
+2. Crea un account gratuito
+3. Ottieni la tua API Key
+4. Aggiungi la chiave al file `.env`:
+   ```
+   RESEND_API_KEY=re_your_api_key_here
+   ```
+
+### 5. Avvia il server di sviluppo
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Apri [http://localhost:3000](http://localhost:3000) nel browser.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 🔧 Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Frontend**: Next.js 15, React, TailwindCSS
+- **Backend**: Next.js API Routes
+- **Database**: SQLite con Prisma ORM
+- **Autenticazione**: NextAuth.js con Credentials Provider
+- **Email**: Resend per invio OTP
+- **Styling**: TailwindCSS
 
-## Learn More
+## 📱 Funzionalità
 
-To learn more about Next.js, take a look at the following resources:
+- ✅ Registrazione utente con verifica email OTP
+- ✅ Login/Logout con sessioni sicure
+- ✅ Dashboard protetta
+- ✅ Validazione email esistente
+- ✅ Design responsive con tema viola
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛡️ Sicurezza
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Password hashate con bcrypt
+- OTP con scadenza (5 minuti)
+- Sessioni JWT sicure
+- Validazione input lato client e server
+- Protezione route autenticate
 
-## Deploy on Vercel
+## 📧 Sistema OTP
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Il sistema di verifica email utilizza:
+- Codici OTP di 6 cifre
+- Scadenza automatica dopo 5 minuti
+- Template email personalizzato
+- Possibilità di reinvio codice
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🚀 Deploy
+
+### Vercel (Consigliato)
+
+1. Connetti il tuo repository GitHub a Vercel
+2. Configura le variabili d'ambiente nel dashboard Vercel:
+   - `DATABASE_URL`
+   - `NEXTAUTH_SECRET` (genera una nuova chiave per produzione)
+   - `NEXTAUTH_URL` (il tuo dominio)
+   - `RESEND_API_KEY`
+
+### Altre piattaforme
+- Netlify
+- Railway  
+- Heroku
+
+## 🤝 Contribuire
+
+1. Fork il progetto
+2. Crea un branch per la tua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit le tue modifiche (`git commit -m 'Add some AmazingFeature'`)
+4. Push al branch (`git push origin feature/AmazingFeature`)
+5. Apri una Pull Request
+
+## 📄 Licenza
+
+Distribuito sotto licenza MIT. Vedi `LICENSE` per maggiori informazioni.

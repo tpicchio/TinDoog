@@ -16,7 +16,7 @@ export default function LoginPage() {
   }, [status, router])
 
   if (status === 'loading') {
-    return <LoadingScreen />;
+    return <LoadingScreen message="Caricamento..." />;
   }
 
   if (status === 'authenticated') {

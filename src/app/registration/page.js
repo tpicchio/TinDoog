@@ -20,6 +20,7 @@ export default function RegistrationController() {
 	const { data: session, status } = useSession();
 	const router = useRouter();
 	const [step, setStep] = useState(0);
+	const [isRegistering, setIsRegistering] = useState(false);
 	const [formData, setFormData] = useState({
 		dogName: '',
 		breed: '',
@@ -36,7 +37,12 @@ export default function RegistrationController() {
 
 	// Mostra loading durante la verifica della sessione
 	if (status === 'loading') {
-		return <LoadingScreen />;
+		return <LoadingScreen message="Caricamento..."/>;
+	}
+
+	// Mostra loading durante la registrazione
+	if (isRegistering) {
+		return <LoadingScreen message="Registrazione completata, reindirizzamento al login..." />;
 	}
 
 	// Non mostrare nulla se l'utente è autenticato (verrà reindirizzato)
@@ -48,14 +54,25 @@ export default function RegistrationController() {
 		setFormData(prev => ({ ...prev, [field]: value }));
 	};
 
-	const handleRegistration = async () => {
+	const handleRegistration = async (finalPassword) => {
+		// Avvia il loading
+		setIsRegistering(true);
+
+		// Crea i dati completi includendo la password finale
+		const completeData = {
+			...formData,
+			password: finalPassword
+		};
+
+		console.log('Dati inviati alla registrazione:', completeData); // Debug
+
 		try {
 			const response = await fetch('/api/register', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify(formData),
+				body: JSON.stringify(completeData),
 			});
 
 			if (response.ok) {
@@ -63,9 +80,11 @@ export default function RegistrationController() {
 				window.location.href = '/login';
 			} else {
 				const error = await response.json();
+				setIsRegistering(false); // Ferma il loading in caso di errore
 				alert('Errore durante la registrazione: ' + error.message);
 			}
 		} catch (error) {
+			setIsRegistering(false); // Ferma il loading in caso di errore
 			alert('Errore durante la registrazione: ' + error.message);
 		}
 	};
@@ -82,7 +101,10 @@ export default function RegistrationController() {
 			/>;
 			break;
 		case 1:
-			content = <VerifyEmail onNext={() => setStep(step + 1)} />;
+			content = <VerifyEmail 
+				email={formData.email}
+				onNext={() => setStep(step + 1)} 
+			/>;
 			break;
 		case 2:
 			content = <DogName 
@@ -106,7 +128,7 @@ export default function RegistrationController() {
 			content = <CreatePassword 
 				onNext={(password) => {
 					updateFormData('password', password);
-					handleRegistration();
+					handleRegistration(password); // Passa la password direttamente
 				}} 
 			/>;
 			break;

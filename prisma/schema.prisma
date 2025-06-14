@@ -19,3 +19,11 @@ model User {
 	breed		String
 	age			Int	
 }
+
+model OTP {
+	id			Int			@id @default(autoincrement())
+	email		String
+	code		String
+	expiresAt	DateTime
+	createdAt	DateTime	@default(now())
+}
