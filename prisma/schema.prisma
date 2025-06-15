@@ -17,6 +17,7 @@ model User {
 	password	String
 	name		String
 	breed		String
+	gender		String
 	age			Int
 	latitude	Float
 	longitude	Float

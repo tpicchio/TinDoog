@@ -28,6 +28,7 @@ export default function RegistrationController() {
 		email: '',
 		dogName: '',
 		breed: '',
+		gender: '',
 		age: -1,
 		password: ''
 	});
@@ -135,9 +136,10 @@ export default function RegistrationController() {
 			break;
 		case 4:
 			content = <BreedSelection 
-			value={formData.breed}
-			onNext={(breed) => {
-				updateFormData('breed', breed);
+			value={{ breed: formData.breed, gender: formData.gender }}
+			onNext={(data) => {
+				updateFormData('breed', data.breed);
+				updateFormData('gender', data.gender);
 				setStep(step + 1);
 			}} 
 			/>;

@@ -1,7 +1,8 @@
 import { useState } from "react";
 
-export function BreedSelection({ value = '', onNext }) {
-  const [breed, setBreed] = useState(value);
+export function BreedSelection({ value = {}, onNext }) {
+  const [breed, setBreed] = useState(value.breed || '');
+  const [gender, setGender] = useState(value.gender || '');
 
   const breeds = [
     { value: '', label: 'Seleziona una razza' },
@@ -23,7 +24,11 @@ export function BreedSelection({ value = '', onNext }) {
       alert('Seleziona una razza');
       return;
     }
-    onNext(breed);
+    if (!gender) {
+      alert('Seleziona il sesso del tuo cane');
+      return;
+    }
+    onNext({ breed, gender });
   };
 
   return (
@@ -31,12 +36,15 @@ export function BreedSelection({ value = '', onNext }) {
 	  {/* Title */}
 	  <div className="flex justify-center">
 		<h1 className="text-4xl font-bold text-black text-center">
-		  Seleziona la razza del tuo cane
+		  Informazioni sul tuo cane
 		</h1>
 	  </div>
 
 	  {/* Breed selection dropdown */}
 	  <div className="mt-10">
+		<label className="block text-lg font-medium text-gray-700 mb-3">
+		  Razza
+		</label>
 		<select
 		  value={breed}
 		  onChange={(e) => setBreed(e.target.value)}
@@ -48,6 +56,50 @@ export function BreedSelection({ value = '', onNext }) {
 		    </option>
 		  ))}
 		</select>
+	  </div>
+
+	  {/* Gender selection */}
+	  <div className="mt-8">
+		<label className="block text-lg font-medium text-gray-700 mb-3">
+		  Sesso
+		</label>
+		<div className="flex gap-4">
+		  <label className="flex items-center cursor-pointer">
+			<input
+			  type="radio"
+			  name="gender"
+			  value="maschio"
+			  checked={gender === 'maschio'}
+			  onChange={(e) => setGender(e.target.value)}
+			  className="sr-only"
+			/>
+			<div className={`flex items-center justify-center w-full px-6 py-3 rounded-full border-2 transition ${
+			  gender === 'maschio' 
+				? 'border-[#A744E6] bg-[#A744E6] text-white' 
+				: 'border-gray-300 text-gray-700 hover:border-[#A744E6]'
+			}`}>
+			  <span className="font-medium">Maschio</span>
+			</div>
+		  </label>
+		  
+		  <label className="flex items-center cursor-pointer">
+			<input
+			  type="radio"
+			  name="gender"
+			  value="femmina"
+			  checked={gender === 'femmina'}
+			  onChange={(e) => setGender(e.target.value)}
+			  className="sr-only"
+			/>
+			<div className={`flex items-center justify-center w-full px-6 py-3 rounded-full border-2 transition ${
+			  gender === 'femmina' 
+				? 'border-[#A744E6] bg-[#A744E6] text-white' 
+				: 'border-gray-300 text-gray-700 hover:border-[#A744E6]'
+			}`}>
+			  <span className="font-medium">Femmina</span>
+			</div>
+		  </label>
+		</div>
 	  </div>
 
 	  {/* Continue button */}

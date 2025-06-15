@@ -6,19 +6,20 @@ const prisma = new PrismaClient();
 
 export async function POST(request) {
   try {
-    const { location, email, dogName, breed, age,  password } = await request.json();
+    const { location, email, dogName, breed, gender, age, password } = await request.json();
 
     console.log('Dati ricevuti dall\'API:', { 
 		location: location,
 		email,
 		dogName,
 		breed,
+		gender,
 		age,
 		password: password
 	}); // Debug
 
     // Validazione dei dati
-    if (!dogName || !breed || age < 0 || !email || !password 
+    if (!dogName || !breed || !gender || age < 0 || !email || !password 
 		|| !location || !location.latitude || !location.longitude) {
       return NextResponse.json(
         { message: 'Tutti i campi sono obbligatori' },
@@ -55,6 +56,7 @@ export async function POST(request) {
         password: hashedPassword,
         name: dogName,
         breed,
+        gender,
         age,
 		latitude: location.latitude,
 		longitude: location.longitude,
