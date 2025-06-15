@@ -13,6 +13,8 @@ import { RegisterEmail } from '@/components/registration/register-email';
 import { VerifyEmail } from '@/components/registration/verify-email';
 import { CreatePassword } from '@/components/registration/create-password';
 import { LoadingScreen } from '@/components/utils/loading-screen';
+import { LocationPermission } from '@/components/registration/location-permission';
+import { Age } from '@/components/registration/age';
 
 
 
@@ -22,9 +24,11 @@ export default function RegistrationController() {
 	const [step, setStep] = useState(0);
 	const [isRegistering, setIsRegistering] = useState(false);
 	const [formData, setFormData] = useState({
+		location: null,
+		email: '',
 		dogName: '',
 		breed: '',
-		email: '',
+		age: -1,
 		password: ''
 	});
 
@@ -89,9 +93,23 @@ export default function RegistrationController() {
 		}
 	};
 
+	const handleLocationDenied = () => {
+		alert('La geolocalizzazione è necessaria per utilizzare TinDoog. Verrai reindirizzato alla home.');
+		router.push('/');
+	};
+
 	let content;
 	switch (step) {
 		case 0:
+			content = <LocationPermission 
+				onNext={(locationData) => {
+				updateFormData('location', locationData);
+				setStep(step + 1);
+				}}
+				onCancel={handleLocationDenied}
+			/>;
+			break;
+		case 1:
 			content = <RegisterEmail 
 				value={formData.email}
 				onNext={(email) => {
@@ -100,13 +118,13 @@ export default function RegistrationController() {
 				}} 
 			/>;
 			break;
-		case 1:
+		case 2:
 			content = <VerifyEmail 
 				email={formData.email}
 				onNext={() => setStep(step + 1)} 
 			/>;
 			break;
-		case 2:
+		case 3:
 			content = <DogName 
 			value={formData.dogName}
 			onNext={(name) => {
@@ -115,7 +133,7 @@ export default function RegistrationController() {
 			}} 
 			/>;
 			break;
-		case 3:
+		case 4:
 			content = <BreedSelection 
 			value={formData.breed}
 			onNext={(breed) => {
@@ -124,7 +142,16 @@ export default function RegistrationController() {
 			}} 
 			/>;
 			break;
-		case 4:
+		case 5:
+			content = <Age 
+			value={formData.age}
+			onNext={(age) => {
+				updateFormData('age', age);
+				console.log('Age: ', age);
+				setStep(step + 1);
+			}}/>
+			break;
+		case 6:
 			content = <CreatePassword 
 				onNext={(password) => {
 					updateFormData('password', password);

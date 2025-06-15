@@ -5,7 +5,7 @@ export function CreatePassword({ onNext }) {
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [error, setError] = useState("");
 
-	const handleContinue = () => {
+	const onContinue = () => {
 		if (password.length < 8) {
 			setError("La password deve essere lunga almeno 8 caratteri.");
 			return;
@@ -55,11 +55,10 @@ export function CreatePassword({ onNext }) {
 			<div className="mt-auto pb-4">
 				<button
 					type="button"
-					onClick={handleContinue}
-					disabled={isRegistering}
+					onClick={onContinue}
 					className="w-full bg-[#A744E6] text-white font-semibold py-4 rounded-full text-base tracking-wide hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
 				>
-					{isRegistering ? 'REGISTRAZIONE...' : 'CONTINUA'}
+					CONTINUA
 				</button>
 			</div>
 		</>
