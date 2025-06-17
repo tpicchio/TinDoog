@@ -58,6 +58,28 @@ export function ProfileTab({ user }) {
           </div>
         </div>
 
+        {/* Profile Photos */}
+        <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Le mie foto</h3>
+            <button
+              onClick={() => router.push('/add-photos')}
+              className="text-[#AA54EA] text-sm font-medium hover:underline"
+            >
+              Gestisci foto
+            </button>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-2">
+            {/* Placeholder per le foto - in futuro verranno caricate dal database */}
+            {Array(6).fill(null).map((_, index) => (
+              <div key={index} className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Foto {index + 1}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Settings */}
         <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Impostazioni</h3>

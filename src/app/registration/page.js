@@ -15,6 +15,7 @@ import { CreatePassword } from '@/components/registration/create-password';
 import { LoadingScreen } from '@/components/utils/loading-screen';
 import { LocationPermission } from '@/components/registration/location-permission';
 import { Age } from '@/components/registration/age';
+import { ImageSelectionRegistration } from '@/components/registration/image-selection';
 
 
 
@@ -30,7 +31,8 @@ export default function RegistrationController() {
 		breed: '',
 		gender: '',
 		age: -1,
-		password: ''
+		password: '',
+		images: []
 	});
 
 	// Reindirizza se l'utente è già loggato
@@ -154,6 +156,14 @@ export default function RegistrationController() {
 			}}/>
 			break;
 		case 6:
+			content = <ImageSelectionRegistration
+				onNext={(images) => {
+					updateFormData('images', images);
+					setStep(step + 1);
+				}}
+			/>
+			break;
+		case 7:
 			content = <CreatePassword 
 				onNext={(password) => {
 					updateFormData('password', password);

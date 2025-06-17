@@ -23,6 +23,18 @@ model User {
 	longitude	Float
 	createdAt	DateTime @default(now())
 	updatedAt	DateTime @updatedAt
+	images		UserImage[]
+}
+
+model UserImage {
+	id			Int		@id @default(autoincrement())
+	userId		Int
+	imageUrl	String
+	s3Key		String
+	createdAt	DateTime @default(now())
+	user		User	@relation(fields: [userId], references: [id], onDelete: Cascade)
+	
+	@@index([userId])
 }
 
 model OTP {

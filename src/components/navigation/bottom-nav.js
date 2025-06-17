@@ -5,17 +5,15 @@ export function BottomNavigation({ activeTab, onTabChange }) {
     {
       id: 'matching',
       icon: HiHeart,
-      label: 'Matching'
     },
     {
       id: 'profile', 
       icon: HiUser,
-      label: 'Profilo'
     }
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 safe-area-pb">
+    <div className="fixed bottom-0 left-0 right-0 bg-white px-4 py-2 safe-area-pb">
       <div className="flex justify-around items-center max-w-md mx-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -25,17 +23,13 @@ export function BottomNavigation({ activeTab, onTabChange }) {
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex flex-col items-center py-2 px-4 rounded-lg transition-colors ${
+              className={`flex items-center justify-center p-3 rounded-lg transition-colors ${
                 isActive 
-                  ? 'text-[#AA54EA]' 
-                  : 'text-gray-400 hover:text-gray-600'
+                  ? 'text-[#AA54EA] bg-purple-50' 
+                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
               }`}
             >
-              <Icon className={`text-2xl mb-1 ${isActive ? 'text-[#AA54EA]' : ''}`} />
-              <span className="text-xs font-medium">{tab.label}</span>
-              {isActive && (
-                <div className="w-1 h-1 bg-[#AA54EA] rounded-full mt-1"></div>
-              )}
+              <Icon className="text-xl" />
             </button>
           );
         })}

@@ -134,7 +134,7 @@ export default function Dashboard() {
     
     return (
       <div className="h-full flex justify-center items-center bg-[#AA54EA] p-4">
-        <div className="w-1/3 h-14/15">
+        <div className="w-1/3 h-19/20">
           {currentMatch && (
             <MatchCard
               dog={currentMatch}
@@ -150,9 +150,9 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col h-screen bg-white">
-      {/* Header - 1/10 dello schermo */}
-      <div className="h-1/20 bg-white shadow-sm border-b px-4 py-4 safe-area-pt">
-        <div className="flex items-center justify-center max-w-md mx-auto h-full">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b px-4 py-4 safe-area-pt">
+        <div className="flex items-center justify-center max-w-md mx-auto">
           <div className="flex items-center gap-2">
             <span className="text-2xl">🐕</span>
             <h1 className="text-2xl font-bold text-[#AA54EA]">Tindoog</h1>
@@ -160,18 +160,16 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Content - 8/10 dello schermo */}
-      <div className="h-18/20">
+      {/* Content - occupa tutto lo spazio rimanente con padding bottom per la nav */}
+      <div className="flex-1 pb-16 overflow-y-auto">
         {renderContent()}
       </div>
 
-      {/* Bottom Navigation - 1/10 dello schermo */}
-      <div className="h-1/20">
-        <BottomNavigation 
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
-      </div>
+      {/* Bottom Navigation - fissa in basso */}
+      <BottomNavigation 
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
     </div>
   )
 }
