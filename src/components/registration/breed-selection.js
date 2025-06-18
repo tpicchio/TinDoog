@@ -75,8 +75,8 @@ export function BreedSelection({ value = {}, onNext }) {
 			/>
 			<div className={`flex items-center justify-center w-full px-6 py-3 rounded-full border-2 transition ${
 			  gender === 'maschio' 
-				? 'border-[#A744E6] bg-[#A744E6] text-white' 
-				: 'border-gray-300 text-gray-700 hover:border-[#A744E6]'
+				? 'border-purple-500 bg-purple-500 text-white' 
+				: 'border-gray-300 text-gray-700 hover:border-purple-500'
 			}`}>
 			  <span className="font-medium">Maschio</span>
 			</div>
@@ -93,8 +93,8 @@ export function BreedSelection({ value = {}, onNext }) {
 			/>
 			<div className={`flex items-center justify-center w-full px-6 py-3 rounded-full border-2 transition ${
 			  gender === 'femmina' 
-				? 'border-[#A744E6] bg-[#A744E6] text-white' 
-				: 'border-gray-300 text-gray-700 hover:border-[#A744E6]'
+				? 'border-purple-500 bg-purple-500 text-white' 
+				: 'border-gray-300 text-gray-700 hover:border-purple-500'
 			}`}>
 			  <span className="font-medium">Femmina</span>
 			</div>
@@ -107,7 +107,7 @@ export function BreedSelection({ value = {}, onNext }) {
 		<button
 		  type="button"
 		  onClick={handleContinue}
-		  className="w-full bg-[#A744E6] text-white font-semibold py-4 rounded-full text-base tracking-wide hover:bg-purple-700 transition"
+		  className="w-full bg-purple-500 text-white font-semibold py-4 rounded-full text-base tracking-wide hover:bg-purple-700 transition"
 		>
 		  CONTINUE
 		</button>

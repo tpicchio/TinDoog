@@ -171,8 +171,8 @@ export function ImageSelectionRegistration({ onNext }) {
               </div>
             ) : (
               // Add photo button
-              <label className="w-full h-full border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-[#AA54EA] hover:bg-purple-50 transition-colors">
-                <div className="w-8 h-8 bg-[#AA54EA] rounded-full flex items-center justify-center">
+              <label className="w-full h-full border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-purple-500 hover:bg-purple-50 transition-colors">
+                <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
                   <HiPlus className="w-4 h-4 text-white" />
                 </div>
                 <input
@@ -206,7 +206,7 @@ export function ImageSelectionRegistration({ onNext }) {
         <button
           onClick={handleNext}
           disabled={uploadedCount < 2 || uploadedCount > 6 || isUploading}
-          className="w-full bg-[#AA54EA] text-white py-3 px-6 rounded-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-purple-600 transition-colors"
+          className="w-full bg-purple-500 text-white py-3 px-6 rounded-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-purple-600 transition-colors"
         >
           {isUploading ? 'Caricamento...' : 'Continua'}
         </button>

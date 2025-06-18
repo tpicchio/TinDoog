@@ -30,7 +30,7 @@ export default function Home() {
 
 	return (
 		<div className="flex justify-center items-center h-screen w-screen bg-white">
-			<div className="flex flex-col rounded-lg justify-center items-center bg-[#AA54EA] h-9/10 w-1/3">
+			<div className="flex flex-col rounded-lg justify-center items-center bg-purple-500 h-9/10 w-1/3">
 			<div className="flex justify-center items-center gap-4">
 				<Image
 					src="/tindoogIco.png"
@@ -50,14 +50,14 @@ export default function Home() {
 
 			<div className="flex flex-col items-center gap-4">
 				<Link href="/login">
-				<button className="border border-white text-white rounded-full px-16 py-3 uppercase w-64 hover:bg-white hover:text-[#AA54EA] transition-colors">
+				<button className="border border-white text-white rounded-full px-16 py-3 uppercase w-64 hover:bg-white hover:text-purple-600 transition-colors">
 					Accedi
 				</button>
 				</Link>
 				<Link href="/registration">
 				<button 
 				type="button"
-				className="border border-white text-white rounded-full px-16 py-3 uppercase w-64 hover:bg-white hover:text-[#AA54EA] transition-colors">
+				className="border border-white text-white rounded-full px-16 py-3 uppercase w-64 hover:bg-white hover:text-purple-600 transition-colors">
 					Registrati
 				</button>
 				</Link>

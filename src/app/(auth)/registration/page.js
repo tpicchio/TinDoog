@@ -154,7 +154,7 @@ export default function RegistrationController() {
 			content = null;
 	}
 	return (
-		<div className="flex justify-center items-center h-screen w-screen bg-[#AA54EA]">
+		<div className="flex justify-center items-center h-screen w-screen bg-purple-500">
 			<div className="flex flex-col h-9/10 w-1/3 rounded-lg bg-white p-6 font-sans">
 				<div className="self-start">
 					<button

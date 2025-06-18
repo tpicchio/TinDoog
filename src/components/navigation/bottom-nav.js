@@ -18,7 +18,7 @@ export function BottomNavigation({ activeTab, onTabChange }) {
             onClick={() => onTabChange(tab.id)}
             className={`flex-1 flex items-center justify-center h-full transition-colors ${
               isActive 
-                ? 'text-[#AA54EA] bg-purple-50' 
+                ? 'text-purple-500 bg-purple-50' 
                 : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
             }`}
           >

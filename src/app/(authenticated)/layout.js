@@ -51,7 +51,7 @@ export default function AuthenticatedLayout({ children }) {
         <div className="flex justify-center items-center h-full">
           <div className="flex items-center gap-2">
             <span className="text-2xl">🐕</span>
-            <h1 className="text-2xl font-bold text-[#AA54EA]">TinDoog</h1>
+            <h1 className="text-2xl font-bold text-purple-500">TinDoog</h1>
           </div>
         </div>
       </header>

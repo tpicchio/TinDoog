@@ -127,7 +127,7 @@ export function VerifyEmail({ email, onNext }) {
 		  {otpSent && !isSending && (
 		    <button
 		      onClick={sendOTP}
-		      className="text-sm text-[#A744E6] hover:text-purple-700 underline font-medium mt-2"
+		      className="text-sm text-purple-500 hover:text-purple-700 underline font-medium mt-2"
 		    >
 		      Reinvia codice
 		    </button>
@@ -141,7 +141,7 @@ export function VerifyEmail({ email, onNext }) {
 		  type="button"
 		  onClick={handleVerify}
 		  disabled={isVerifying || isSending || !otpSent || !code.trim()}
-		  className="w-full bg-[#A744E6] text-white font-semibold py-4 rounded-full text-base tracking-wide hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+		  className="w-full bg-purple-500 text-white font-semibold py-4 rounded-full text-base tracking-wide hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
 		>
 		  {isVerifying ? 'VERIFICA...' : 'VERIFICA CODICE'}
 		</button>

@@ -70,7 +70,7 @@ export function LocationPermission({ onNext, onCancel }) {
       {/* Icon and explanation */}
       <div className="mt-10 text-center">
         <div className="flex justify-center mb-6">
-          <HiLocationMarker className="text-6xl text-[#A744E6]" />
+          <HiLocationMarker className="text-6xl text-purple-500" />
         </div>
         
         <div className="space-y-4">
@@ -80,15 +80,15 @@ export function LocationPermission({ onNext, onCancel }) {
           
           <ul className="text-left space-y-2 max-w-md mx-auto">
             <li className="flex items-start">
-              <span className="text-[#A744E6] mr-2">•</span>
+              <span className="text-purple-500 mr-2">•</span>
               <span className="text-gray-600">Trovare altri cani nelle vicinanze</span>
             </li>
             <li className="flex items-start">
-              <span className="text-[#A744E6] mr-2">•</span>
+              <span className="text-purple-500 mr-2">•</span>
               <span className="text-gray-600">Mostrare la distanza nei match</span>
             </li>
             <li className="flex items-start">
-              <span className="text-[#A744E6] mr-2">•</span>
+              <span className="text-purple-500 mr-2">•</span>
               <span className="text-gray-600">Suggerire luoghi per gli incontri</span>
             </li>
           </ul>
@@ -112,7 +112,7 @@ export function LocationPermission({ onNext, onCancel }) {
           type="button"
           onClick={requestLocation}
           disabled={isRequesting}
-          className="w-full bg-[#A744E6] text-white font-semibold py-4 rounded-full text-base tracking-wide hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-purple-500 text-white font-semibold py-4 rounded-full text-base tracking-wide hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isRequesting ? 'RILEVAMENTO...' : 'CONSENTI ACCESSO'}
         </button>

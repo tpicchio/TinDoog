@@ -49,14 +49,14 @@ export default function ProfilePage() {
         <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
           <div className="text-center">
             {/* Profile Image Placeholder */}
-            <div className="w-24 h-24 bg-gradient-to-br from-[#AA54EA] to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
               <span className="text-3xl">🐕</span>
             </div>
             
             <h2 className="text-2xl font-bold text-gray-900 mb-1">{user?.name}</h2>
             <p className="text-gray-600 text-sm mb-4">{user?.email}</p>
             
-            <button className="bg-[#AA54EA] text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-purple-600 transition-colors flex items-center gap-2 mx-auto">
+            <button className="bg-purple-500 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-purple-600 transition-colors flex items-center gap-2 mx-auto">
               <HiPencil className="text-sm" />
               Modifica Profilo
             </button>
@@ -96,7 +96,7 @@ export default function ProfilePage() {
             <h3 className="text-lg font-semibold text-gray-900">Le mie foto</h3>
             <button
               onClick={() => router.push('/add-photos')}
-              className="text-[#AA54EA] text-sm font-medium hover:underline"
+              className="text-purple-500 text-sm font-medium hover:underline"
             >
               Gestisci foto
             </button>
@@ -146,7 +146,7 @@ export default function ProfilePage() {
               <p className="text-gray-500 text-sm mb-2">Non hai ancora caricato nessuna foto</p>
               <button
                 onClick={() => router.push('/add-photos')}
-                className="text-[#AA54EA] text-sm font-medium hover:underline"
+                className="text-purple-500 text-sm font-medium hover:underline"
               >
                 Aggiungi la tua prima foto
               </button>

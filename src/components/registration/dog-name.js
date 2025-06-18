@@ -39,7 +39,7 @@ export function DogName({ value = '', onNext }) {
         <button
           type="button"
           onClick={handleContinue}
-          className="w-full bg-[#A744E6] text-white font-semibold py-4 rounded-full text-base tracking-wide hover:bg-purple-700 transition"
+          className="w-full bg-purple-500 text-white font-semibold py-4 rounded-full text-base tracking-wide hover:bg-purple-700 transition"
         >
           CONTINUE
         </button>

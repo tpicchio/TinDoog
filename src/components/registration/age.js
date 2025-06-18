@@ -29,7 +29,7 @@ export function Age({ onNext }) {
 			<div className="mt-10 pb-8">
 				<input
 					type="text"
-					placeholder="Inserisci un numero"
+					placeholder="Inserisci l'età"
 					className="w-full border-0 border-b-2 border-gray-200 pb-2 text-2xl text-black placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-purple-500"
 					value={age}
 					onChange={e => setAge(e.target.value)}
@@ -43,7 +43,7 @@ export function Age({ onNext }) {
 				<button
 					type="button"
 					onClick={onContinue}
-					className="w-full bg-[#A744E6] text-white font-semibold py-4 rounded-full text-base tracking-wide hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+					className="w-full bg-purple-500 text-white font-semibold py-4 rounded-full text-base tracking-wide hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
 				>
 					CONTINUA
 				</button>

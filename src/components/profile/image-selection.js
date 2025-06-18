@@ -204,8 +204,8 @@ export function ImageSelection({ onComplete }) {
                 </div>
               ) : (
                 // Add photo button
-                <label className="w-full h-full border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center cursor-pointer hover:border-[#AA54EA] hover:bg-purple-50 transition-colors">
-                  <div className="w-12 h-12 bg-[#AA54EA] rounded-full flex items-center justify-center">
+                <label className="w-full h-full border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center cursor-pointer hover:border-purple-500 hover:bg-purple-50 transition-colors">
+                  <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
                     <HiPlus className="w-6 h-6 text-white" />
                   </div>
                   <input
@@ -240,7 +240,7 @@ export function ImageSelection({ onComplete }) {
         <button
           onClick={handleContinue}
           disabled={uploadedCount < 2 || uploadedCount > 6 || isUploading}
-          className="w-full bg-[#AA54EA] text-white py-4 rounded-xl font-medium text-lg disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-purple-600 transition-colors"
+          className="w-full bg-purple-500 text-white py-4 rounded-xl font-medium text-lg disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-purple-600 transition-colors"
         >
           {isUploading ? 'Salvataggio...' : 'CONTINUE'}
         </button>

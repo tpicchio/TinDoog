@@ -96,7 +96,7 @@ export function RegisterEmail({ value = '', onNext }) {
 		        {error}
 		        <button
 		          onClick={goToLogin}
-		          className="ml-1 text-[#A744E6] hover:text-purple-700 underline font-medium"
+		          className="ml-1 text-purple-500 hover:text-purple-700 underline font-medium"
 		        >
 		        vai al login
 		        </button>
@@ -115,7 +115,7 @@ export function RegisterEmail({ value = '', onNext }) {
 		  type="button"
 		  onClick={handleContinue}
 		  disabled={isChecking}
-		  className="w-full bg-[#A744E6] text-white font-semibold py-4 rounded-full text-base tracking-wide hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+		  className="w-full bg-purple-500 text-white font-semibold py-4 rounded-full text-base tracking-wide hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
 		>
 		  {isChecking ? 'VERIFICA...' : 'CONTINUE'}
 		</button>

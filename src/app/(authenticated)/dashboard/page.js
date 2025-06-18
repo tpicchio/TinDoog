@@ -90,7 +90,7 @@ export default function Dashboard() {
                 }
                 setMatches(generateMatches(mockCurrentUser))
               }}
-              className="bg-[#AA54EA] text-white px-6 py-3 rounded-full font-medium hover:bg-purple-600 transition-colors"
+              className="bg-purple-500 text-white px-6 py-3 rounded-full font-medium hover:bg-purple-600 transition-colors"
             >
               Ricarica Match
             </button>
@@ -102,7 +102,7 @@ export default function Dashboard() {
     const currentMatch = matches[currentMatchIndex]
     
     return (
-      <div className="h-full flex justify-center items-center bg-[#AA54EA] p-4">
+      <div className="h-full flex justify-center items-center bg-purple-500 p-4">
         <div className="w-1/3 h-19/20">
           {currentMatch && (
             <MatchCard
