@@ -1,10 +1,8 @@
 "use client";
 
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { IoIosArrowBack } from "react-icons/io";
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 
 // Components
 import { DogName } from '@/components/registration/dog-name';
@@ -17,11 +15,8 @@ import { LocationPermission } from '@/components/registration/location-permissio
 import { Age } from '@/components/registration/age';
 import { ImageSelectionRegistration } from '@/components/registration/image-selection';
 
-
-
 export default function RegistrationController() {
-	const { data: session, status } = useSession();
-	const router = useRouter();
+	// I controlli di autenticazione sono gestiti dal layout (auth)
 	const [step, setStep] = useState(0);
 	const [isRegistering, setIsRegistering] = useState(false);
 	const [formData, setFormData] = useState({
@@ -35,26 +30,9 @@ export default function RegistrationController() {
 		images: []
 	});
 
-	// Reindirizza se l'utente è già loggato
-	useEffect(() => {
-		if (status === 'authenticated') {
-			router.push('/dashboard');
-		}
-	}, [status, router]);
-
-	// Mostra loading durante la verifica della sessione
-	if (status === 'loading') {
-		return <LoadingScreen message="Caricamento..."/>;
-	}
-
 	// Mostra loading durante la registrazione
 	if (isRegistering) {
 		return <LoadingScreen message="Registrazione completata, reindirizzamento al login..." />;
-	}
-
-	// Non mostrare nulla se l'utente è autenticato (verrà reindirizzato)
-	if (status === 'authenticated') {
-		return null;
 	}
 
 	const updateFormData = (field, value) => {
