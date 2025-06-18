@@ -6,6 +6,8 @@ import { PrismaClient } from '@/generated/prisma'
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
+import { parseISO, addSeconds } from 'date-fns';
+
 const prisma = new PrismaClient()
 
 // Configurazione AWS S3 (opzionale per testing)
@@ -73,6 +75,7 @@ export async function GET() {
       select: {
         id: true,
         s3Key: true,
+		imageUrl: true,
         createdAt: true
       }
     })
@@ -81,19 +84,48 @@ export async function GET() {
     const imagesWithUrls = []
     
     for (const image of userImages) {
-      try {
-        const presignedUrl = await generateFreshPresignedUrl(image.s3Key)
-        
-        imagesWithUrls.push({
-          id: image.id,
-          imageUrl: presignedUrl,
-          createdAt: image.createdAt
-        })
-      } catch (error) {
-        console.error(`Errore generazione URL per immagine ${image.id}:`, error)
-        // Salta questa immagine se c'è un errore
-        continue
-      }
+		let params = new URLSearchParams(image.imageUrl);
+		let creationDate = parseISO(params.get("X-Amz-Date"));
+		let expiresInSec = parseInt(params.get("X-Amz-Expires"));
+		let expiresDate = addSeconds(creationDate, expiresInSec);
+		let expired = expiresDate < new Date();
+
+		if (expired) {
+			try {			
+				const presignedUrl = await generateFreshPresignedUrl(image.s3Key)
+				console.log("Presigned URL NUOVO: ", presignedUrl);
+				const createdAtUrl = new Date();
+
+				await prisma.userImage.update({
+					where: {
+						id: image.id
+					},
+					data: {
+						imageUrl: presignedUrl,
+						createdAt: createdAtUrl
+					}
+				})
+
+				imagesWithUrls.push({
+					id: image.id,
+					imageUrl: presignedUrl,
+					createdAt: createdAtUrl
+				})
+			} catch (error) {
+				console.error(`Errore generazione URL per immagine ${image.id}:`, error)
+				// Salta questa immagine se c'è un errore
+				continue
+			}
+		}
+		else {
+			console.log("Presigned ancora attivo fino a: ", expiresDate);
+			
+			imagesWithUrls.push({
+				id: image.id,
+				imageUrl: image.imageUrl,
+				createdAt: image.createdAt
+			})
+		}
     }
 
     return NextResponse.json({
