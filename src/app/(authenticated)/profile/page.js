@@ -1,9 +1,14 @@
+'use client';
+
+import { useSession } from 'next-auth/react';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { HiLogout, HiPencil } from 'react-icons/hi';
 
-export function ProfileTab({ user }) {
+export default function ProfilePage() {
+  const { data: session } = useSession();
   const router = useRouter();
+  const user = session?.user;
 
   const handleLogout = async () => {
     await signOut({ redirect: false });
@@ -11,7 +16,7 @@ export function ProfileTab({ user }) {
   };
 
   return (
-    <div className="flex-1 bg-gray-50 px-4 py-6">
+    <div className="h-full bg-gray-50 px-4 py-6 overflow-y-auto">
       <div className="max-w-md mx-auto">
         {/* Profile Header */}
         <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm">

@@ -1,49 +1,35 @@
+// src/app/(authenticated)/dashboard/page.js
 'use client'
-import { useSession, signOut } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
 
 // Components
-import { LoadingScreen } from '@/components/utils/loading-screen'
 import { MatchCard } from '@/components/matching/match-card'
-import { BottomNavigation } from '@/components/navigation/bottom-nav'
-import { ProfileTab } from '@/components/profile/profile-tab'
 
 // Services
 import { generateMatches, handleMatchAction } from '@/services/matching'
 
-
 export default function Dashboard() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
-  const [activeTab, setActiveTab] = useState('matching')
+  const { data: session } = useSession() // Già verificato nel layout
   const [matches, setMatches] = useState([])
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0)
   const [isActionLoading, setIsActionLoading] = useState(false)
 
-  // Proteggi la dashboard - reindirizza se non loggato
+  // Carica i match all'avvio
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/')
-    }
-  }, [status, router])
-
-  // Carica i match quando l'utente è autenticato
-  useEffect(() => {
-    if (status === 'authenticated' && session?.user) {
-      // Mock user position - in futuro verrà dal database
+    if (session?.user) {
       const mockCurrentUser = {
         id: session.user.id,
         name: session.user.name,
         email: session.user.email,
-        latitude: 43.7696, // Firenze
+        latitude: 43.7696,
         longitude: 11.2558
       }
       
       const potentialMatches = generateMatches(mockCurrentUser)
       setMatches(potentialMatches)
     }
-  }, [status, session])
+  }, [session])
 
   const handleLike = async () => {
     if (currentMatchIndex >= matches.length) return
@@ -55,15 +41,13 @@ export default function Dashboard() {
       const result = await handleMatchAction(session.user.id, currentMatch.id, true)
       
       if (result.match) {
-        // Mostra popup di match
-        alert(`🎉 È un match! Tu e ${currentMatch.name} vi piacete!`)
+        alert(`🎉 È un match con ${currentMatch.name}!`)
       }
-      
-      setCurrentMatchIndex(prev => prev + 1)
     } catch (error) {
       console.error('Errore nel like:', error)
     } finally {
       setIsActionLoading(false)
+      setCurrentMatchIndex(prev => prev + 1)
     }
   }
 
@@ -75,31 +59,16 @@ export default function Dashboard() {
     
     try {
       await handleMatchAction(session.user.id, currentMatch.id, false)
-      setCurrentMatchIndex(prev => prev + 1)
     } catch (error) {
       console.error('Errore nel pass:', error)
     } finally {
       setIsActionLoading(false)
+      setCurrentMatchIndex(prev => prev + 1)
     }
   }
 
-  // Loading state
-  if (status === 'loading') {
-    return <LoadingScreen message="Caricamento..." />
-  }
-
-  // Non mostrare nulla se non autenticato (verrà reindirizzato)
-  if (status === 'unauthenticated') {
-    return null
-  }
-
-  // Contenuto basato sul tab attivo
   const renderContent = () => {
-    if (activeTab === 'profile') {
-      return <ProfileTab user={session?.user} />
-    }
-
-    // Tab matching
+    // Solo tab matching - il profilo è ora una pagina separata
     if (currentMatchIndex >= matches.length) {
       return (
         <div className="h-full flex items-center justify-center bg-gray-50">
@@ -149,27 +118,8 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-white">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b px-4 py-4 safe-area-pt">
-        <div className="flex items-center justify-center max-w-md mx-auto">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">🐕</span>
-            <h1 className="text-2xl font-bold text-[#AA54EA]">Tindoog</h1>
-          </div>
-        </div>
-      </div>
-
-      {/* Content - occupa tutto lo spazio rimanente con padding bottom per la nav */}
-      <div className="flex-1 pb-16 overflow-y-auto">
-        {renderContent()}
-      </div>
-
-      {/* Bottom Navigation - fissa in basso */}
-      <BottomNavigation 
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
+    <div className="h-full">
+      {renderContent()}
     </div>
   )
 }
