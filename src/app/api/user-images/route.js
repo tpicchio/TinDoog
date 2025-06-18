@@ -1,0 +1,113 @@
+// src/app/api/user-images/route.js
+import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../auth/[...nextauth]/route'
+import { PrismaClient } from '@/generated/prisma'
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+
+const prisma = new PrismaClient()
+
+// Configurazione AWS S3 (opzionale per testing)
+const isAwsConfigured = () => {
+  const required = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_REGION', 'AWS_S3_BUCKET_NAME']
+  return required.every(key => process.env[key] && process.env[key].trim() !== '')
+}
+
+const s3Client = isAwsConfigured() ? new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+}) : null
+
+// Funzione per generare un presigned URL fresco (sempre nuovo)
+async function generateFreshPresignedUrl(s3Key) {
+  if (!s3Client) {
+    // Se AWS non è configurato, restituisci un placeholder colorato
+    const colors = ['bg-red-300', 'bg-blue-300', 'bg-green-300', 'bg-yellow-300', 'bg-purple-300', 'bg-pink-300']
+    const randomColor = colors[Math.floor(Math.random() * colors.length)]
+    return `https://via.placeholder.com/300x400/${randomColor.replace('bg-', '').replace('-300', '')}/white?text=Photo`
+  }
+
+  try {
+    const command = new GetObjectCommand({
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Key: s3Key,
+    })
+    
+    // Genera URL valido per 15 minuti (presigned URL di breve durata)
+    const presignedUrl = await getSignedUrl(s3Client, command, {
+      expiresIn: 900, // 15 minuti
+    })
+    
+    return presignedUrl
+  } catch (error) {
+    console.error('Errore nella generazione presigned URL:', error)
+    // Fallback a placeholder in caso di errore
+    return 'https://via.placeholder.com/300x400/gray/white?text=Error'
+  }
+}
+
+export async function GET() {
+  try {
+    // Verifica autenticazione
+    const session = await getServerSession(authOptions)
+    
+    if (!session || !session.user) {
+      return NextResponse.json(
+        { error: 'Non autorizzato' },
+        { status: 401 }
+      )
+    }
+
+    // Recupera le immagini dell'utente (solo s3Key)
+    const userImages = await prisma.userImage.findMany({
+      where: {
+        userId: parseInt(session.user.id)
+      },
+      orderBy: {
+        createdAt: 'asc'
+      },
+      select: {
+        id: true,
+        s3Key: true,
+        createdAt: true
+      }
+    })
+
+    // Genera presigned URL freschi per ogni immagine
+    const imagesWithUrls = []
+    
+    for (const image of userImages) {
+      try {
+        const presignedUrl = await generateFreshPresignedUrl(image.s3Key)
+        
+        imagesWithUrls.push({
+          id: image.id,
+          imageUrl: presignedUrl,
+          createdAt: image.createdAt
+        })
+      } catch (error) {
+        console.error(`Errore generazione URL per immagine ${image.id}:`, error)
+        // Salta questa immagine se c'è un errore
+        continue
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      images: imagesWithUrls
+    })
+
+  } catch (error) {
+    console.error('Errore nel recupero immagini utente:', error)
+    return NextResponse.json(
+      { error: 'Errore interno del server' },
+      { status: 500 }
+    )
+  } finally {
+    await prisma.$disconnect()
+  }
+}

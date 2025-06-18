@@ -3,12 +3,39 @@
 import { useSession } from 'next-auth/react';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { HiLogout, HiPencil } from 'react-icons/hi';
 
 export default function ProfilePage() {
   const { data: session } = useSession();
   const router = useRouter();
   const user = session?.user;
+  const [userImages, setUserImages] = useState([]);
+  const [loadingImages, setLoadingImages] = useState(true);
+
+  // Carica le immagini dell'utente
+  useEffect(() => {
+    const fetchUserImages = async () => {
+      if (!session?.user) return;
+      
+      try {
+        const response = await fetch('/api/user-images');
+        const data = await response.json();
+        
+        if (data.success) {
+          setUserImages(data.images);
+        } else {
+          console.error('Errore nel caricamento immagini:', data.error);
+        }
+      } catch (error) {
+        console.error('Errore nel fetch immagini:', error);
+      } finally {
+        setLoadingImages(false);
+      }
+    };
+
+    fetchUserImages();
+  }, [session]);
 
   const handleLogout = async () => {
     await signOut({ redirect: false });
@@ -76,13 +103,55 @@ export default function ProfilePage() {
           </div>
           
           <div className="grid grid-cols-3 gap-2">
-            {/* Placeholder per le foto - in futuro verranno caricate dal database */}
-            {Array(6).fill(null).map((_, index) => (
-              <div key={index} className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
-                <span className="text-gray-400 text-xs">Foto {index + 1}</span>
-              </div>
-            ))}
+            {loadingImages ? (
+              // Mostra skeleton loading durante il caricamento
+              Array(6).fill(null).map((_, index) => (
+                <div key={index} className="aspect-square bg-gray-200 rounded-lg animate-pulse flex items-center justify-center">
+                  <span className="text-gray-400 text-xs">Caricamento...</span>
+                </div>
+              ))
+            ) : (
+              <>
+                {/* Mostra le immagini reali dell'utente */}
+                {userImages.map((image, index) => (
+                  <div key={image.id} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                    <img
+                      src={image.imageUrl}
+                      alt={`Foto ${index + 1} del profilo`}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        // Fallback se l'immagine non si carica
+                        e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIxIDlWN0MxOSA1IDE3IDQgMTUgNEg5QzcgNCA1IDUgMyA3VjE3QzMgMTkgNSAyMSA3IDIxSDE3QzE5IDIxIDIxIDE5IDIxIDE3VjE1IiBzdHJva2U9IiM5Q0EzQUYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxjaXJjbGUgY3g9IjkiIGN5PSI5IiByPSIyIiBzdHJva2U9IiM5Q0EzQUYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGQ9Im0yMSAxNS0zLjEtMy4xYTIgMiAwIDAgMC0yLjgxLjAxTDEwIDEyTDMgMjEiIHN0cm9rZT0iIzlDQTNBRiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg=='
+                        e.target.className = 'w-full h-full object-contain p-4 opacity-50'
+                      }}
+                    />
+                  </div>
+                ))}
+                
+                {/* Mostra placeholder per slot vuoti (massimo 6 foto) */}
+                {Array(Math.max(0, 6 - userImages.length)).fill(null).map((_, index) => (
+                  <div key={`empty-${index}`} className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+                    <span className="text-gray-400 text-xs text-center">
+                      {userImages.length === 0 && index === 0 ? 'Nessuna foto' : '+'}
+                    </span>
+                  </div>
+                ))}
+              </>
+            )}
           </div>
+          
+          {/* Messaggio se non ci sono foto */}
+          {!loadingImages && userImages.length === 0 && (
+            <div className="text-center py-4">
+              <p className="text-gray-500 text-sm mb-2">Non hai ancora caricato nessuna foto</p>
+              <button
+                onClick={() => router.push('/add-photos')}
+                className="text-[#AA54EA] text-sm font-medium hover:underline"
+              >
+                Aggiungi la tua prima foto
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Settings */}
