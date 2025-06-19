@@ -52,6 +52,50 @@ async function generateFreshPresignedUrl(s3Key) {
   }
 }
 
+function isValidPresignedUrl(url) {
+	if (!url || typeof url !== 'string'){
+		return false;
+	}
+
+	if (url.includes('via.placeholder.com') || url.includes('placeholder')) {
+		return false;
+	}
+
+	try {
+		const urlObj = new URL(url);
+		const isS3Url = urlObj.hostname.includes('amazonaws.com') || 
+						urlObj.hostname.includes('s3.') ||
+						urlObj.hostname.includes('.s3.');
+		
+		if (!isS3Url) {
+			return false;
+		}
+		
+		const hasRequiredParams = urlObj.searchParams.has('X-Amz-Algorithm') &&
+								urlObj.searchParams.has('X-Amz-Credential') &&
+								urlObj.searchParams.has('X-Amz-Date') &&
+								urlObj.searchParams.has('X-Amz-Expires') &&
+								urlObj.searchParams.has('X-Amz-Signature');
+		if (!hasRequiredParams)
+			return hasRequiredParams;
+
+		// Check if it's expired
+		const creationDateStr = urlObj.searchParams.get("X-Amz-Date");
+		const expiresInSec = parseInt(urlObj.searchParams.get("X-Amz-Expires"));
+		
+		if (!creationDateStr || !expiresInSec) {
+			return false;
+		}
+		
+		const creationDate = parseISO(creationDateStr);
+		const expiresDate = addSeconds(creationDate, expiresInSec);
+		
+		return !(expiresDate < new Date());
+	} catch (error) {
+		return false;
+	}
+}
+
 export async function GET() {
   try {
     // Verifica autenticazione
@@ -84,13 +128,7 @@ export async function GET() {
     const imagesWithUrls = []
     
     for (const image of userImages) {
-		let params = new URLSearchParams(image.imageUrl);
-		let creationDate = parseISO(params.get("X-Amz-Date"));
-		let expiresInSec = parseInt(params.get("X-Amz-Expires"));
-		let expiresDate = addSeconds(creationDate, expiresInSec);
-		let expired = expiresDate < new Date();
-
-		if (expired) {
+		if (!isValidPresignedUrl(image.imageUrl)) {
 			try {			
 				const presignedUrl = await generateFreshPresignedUrl(image.s3Key)
 				console.log("Presigned URL NUOVO: ", presignedUrl);
@@ -118,7 +156,7 @@ export async function GET() {
 			}
 		}
 		else {
-			console.log("Presigned ancora attivo fino a: ", expiresDate);
+			console.log("Presigned ancora attivo.");
 			
 			imagesWithUrls.push({
 				id: image.id,

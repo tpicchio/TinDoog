@@ -58,64 +58,74 @@ export async function POST(request) {
     // Hash della password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Crea l'utente con le immagini in una transazione
-    const result = await prisma.$transaction(async (tx) => {
-      // Crea l'utente
-      const user = await tx.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-          name: dogName,
-          breed,
-          gender,
-          age,
-          latitude: location.latitude,
-          longitude: location.longitude,
-        }
-      });
+    // PRIMA: Crea l'utente (senza transazione per le immagini)
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name: dogName,
+        breed,
+        gender,
+        age,
+        latitude: location.latitude,
+        longitude: location.longitude,
+      }
+    });
 
-      // Sposta le immagini dalla cartella temporanea a quella dell'utente
-      let finalImages = [];
-      if (images && images.length > 0) {
-        try {
-          const moveResponse = await fetch(`${process.env.NEXTAUTH_URL}/api/move-temp-images`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              userId: user.id,
-              tempImages: images
-            }),
-          });
+    // DOPO: Gestisci le immagini separatamente
+    let finalImages = [];
+    if (images && images.length > 0) {
+      try {
+        // Sposta le immagini dalla cartella temporanea a quella dell'utente
+        const moveResponse = await fetch(`${process.env.NEXTAUTH_URL}/api/move-temp-images`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: user.id,
+            tempImages: images
+          }),
+        });
 
-          if (moveResponse.ok) {
-            const { movedImages } = await moveResponse.json();
-            finalImages = movedImages;
-          } else {
-            console.error('Errore spostamento immagini');
-            // Usa le immagini temporanee se lo spostamento fallisce
-            finalImages = images;
-          }
-        } catch (error) {
-          console.error('Errore chiamata API spostamento:', error);
+        if (moveResponse.ok) {
+          const { movedImages } = await moveResponse.json();
+          finalImages = movedImages;
+          console.log('Immagini spostate con successo:', finalImages.length);
+        } else {
+          console.error('Errore spostamento immagini, uso URL temporanei');
           // Usa le immagini temporanee se lo spostamento fallisce
           finalImages = images;
         }
-
-        // Salva le immagini nel database
-        await tx.userImage.createMany({
-          data: finalImages.map(image => ({
-            userId: user.id,
-            imageUrl: image.publicUrl,
-            s3Key: image.s3Key,
-          }))
-        });
+      } catch (error) {
+        console.error('Errore chiamata API spostamento:', error);
+        // Usa le immagini temporanee se lo spostamento fallisce
+        finalImages = images;
       }
 
-      return user;
-    });
+      // Salva le immagini nel database (con transazione più veloce)
+      try {
+        await prisma.$transaction(async (tx) => {
+          await tx.userImage.createMany({
+            data: finalImages.map(image => ({
+              userId: user.id,
+              imageUrl: image.publicUrl,
+              s3Key: image.s3Key,
+            }))
+          });
+        }, {
+          timeout: 10000 // 10 secondi di timeout
+        });
+        
+        console.log('Immagini salvate nel database:', finalImages.length);
+      } catch (imageError) {
+        console.error('Errore salvataggio immagini nel DB:', imageError);
+        // Se il salvataggio delle immagini fallisce, elimina l'utente per mantenere consistenza
+        await prisma.user.delete({ where: { id: user.id } });
+        throw new Error('Errore nel salvataggio delle immagini');
+      }
+    }
 
     return NextResponse.json(
-      { message: 'Utente registrato con successo', userId: result.id },
+      { message: 'Utente registrato con successo', userId: user.id },
       { status: 201 }
     );
 

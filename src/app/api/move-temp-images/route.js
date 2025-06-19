@@ -1,6 +1,35 @@
 import { NextResponse } from 'next/server';
-import { CopyObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { CopyObjectCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { s3Client, AWS_CONFIG } from '@/lib/aws-config';
+
+// Funzione per generare un presigned URL fresco
+async function generateFreshPresignedUrl(s3Key) {
+  if (!s3Client) {
+    // Se AWS non è configurato, restituisci un placeholder colorato
+    const colors = ['bg-red-300', 'bg-blue-300', 'bg-green-300', 'bg-yellow-300', 'bg-purple-300', 'bg-pink-300']
+    const randomColor = colors[Math.floor(Math.random() * colors.length)]
+    return `https://via.placeholder.com/300x400/${randomColor.replace('bg-', '').replace('-300', '')}/white?text=Photo`
+  }
+
+  try {
+    const command = new GetObjectCommand({
+      Bucket: AWS_CONFIG.BUCKET_NAME,
+      Key: s3Key,
+    })
+    
+    // Genera URL valido per 15 minuti (presigned URL di breve durata)
+    const presignedUrl = await getSignedUrl(s3Client, command, {
+      expiresIn: 900, // 15 minuti
+    })
+    
+    return presignedUrl
+  } catch (error) {
+    console.error('Errore nella generazione presigned URL:', error)
+    // Fallback a placeholder in caso di errore
+    return 'https://via.placeholder.com/300x400/gray/white?text=Error'
+  }
+}
 
 export async function POST(request) {
   try {
@@ -44,11 +73,11 @@ export async function POST(request) {
 
         await s3Client.send(deleteCommand);
 
-        // Nuovo URL pubblico
-        const newPublicUrl = `https://${AWS_CONFIG.BUCKET_NAME}.s3.${AWS_CONFIG.REGION}.amazonaws.com/${newS3Key}`;
+        // Genera presigned URL per l'immagine spostata
+        const presignedUrl = await generateFreshPresignedUrl(newS3Key);
 
         movedImages.push({
-          publicUrl: newPublicUrl,
+          publicUrl: presignedUrl, // Ora è un presigned URL
           s3Key: newS3Key
         });
 
