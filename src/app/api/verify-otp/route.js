@@ -14,13 +14,12 @@ export async function POST(request) {
       );
     }
 
-    // Cerca l'OTP valido
     const otp = await prisma.oTP.findFirst({
       where: {
         email,
         code,
         expiresAt: {
-          gt: new Date() // Maggiore della data corrente (non scaduto)
+          gt: new Date()
         }
       }
     });
@@ -32,7 +31,6 @@ export async function POST(request) {
       );
     }
 
-    // Elimina l'OTP utilizzato
     await prisma.oTP.delete({
       where: { id: otp.id }
     });

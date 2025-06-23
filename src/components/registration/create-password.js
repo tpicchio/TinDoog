@@ -20,14 +20,12 @@ export function CreatePassword({ onNext }) {
 
 	return (
 		<>
-			{/* Title */}
 			<div className="flex justify-center">
 				<h1 className="text-4xl font-bold text-black text-center">
 					Crea una password
 				</h1>
 			</div>
 
-			{/* Password input group */}
 			<div className="mt-10">
 				<input
 					type="password"
@@ -51,7 +49,6 @@ export function CreatePassword({ onNext }) {
 				)}
 			</div>
 
-			{/* Continue button */}
 			<div className="mt-auto pb-4">
 				<button
 					type="button"

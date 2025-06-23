@@ -17,12 +17,11 @@ export async function POST(request) {
       );
     }
 
-    // Controlla se esiste già un OTP recente (meno di 2 minuti fa)
     const recentOTP = await prisma.oTP.findFirst({
       where: { 
         email,
         createdAt: {
-          gt: new Date(Date.now() - 2 * 60 * 1000) // 2 minuti fa
+          gt: new Date(Date.now() - 2 * 60 * 1000)
         }
       }
     });
@@ -32,34 +31,29 @@ export async function POST(request) {
       return NextResponse.json({ 
         success: true, 
         message: 'OTP già inviato di recente. Attendi 2 minuti prima di richiederne un altro.',
-        // In sviluppo, restituiamo anche il codice esistente per debug
         ...(process.env.NODE_ENV === 'development' && { otp: recentOTP.code })
       });
     }
 
-    // Elimina eventuali OTP precedenti per questa email
     await prisma.oTP.deleteMany({
       where: { email }
     });
 
-    // Genera OTP di 6 cifre
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     
-    // Salva OTP nel database con scadenza (5 minuti)
     await prisma.oTP.create({
       data: {
         email,
         code: otp,
-        expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minuti
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000), 
       }
     });
 
-    // Invia email (solo se RESEND_API_KEY è configurata)
     console.log('RESEND_API_KEY configurata:', !!process.env.RESEND_API_KEY);
     if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 'your_resend_api_key_here') {
       console.log('📧 Tentativo invio email a:', email);
       await resend.emails.send({
-        from: 'TinDoog <onboarding@resend.dev>', // Usa il dominio di default di Resend per i test
+        from: 'TinDoog <onboarding@resend.dev>', 
         to: [email],
         subject: 'Codice di verifica TinDoog 🐕',
         html: `
@@ -103,7 +97,6 @@ export async function POST(request) {
     return NextResponse.json({ 
       success: true, 
       message: 'Codice OTP inviato via email',
-      // In sviluppo, restituiamo anche il codice per debug
       ...(process.env.NODE_ENV === 'development' && { otp })
     });
 

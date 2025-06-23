@@ -29,13 +29,12 @@ export function ImageSelection({ onComplete }) {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Validazione file
     if (!file.type.startsWith('image/')) {
       alert('Seleziona solo file immagine');
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+    if (file.size > 5 * 1024 * 1024) {
       alert('Immagine troppo grande (max 5MB)');
       return;
     }
@@ -43,7 +42,6 @@ export function ImageSelection({ onComplete }) {
     setIsUploading(true);
 
     try {
-      // 1. Richiedi presigned URL
       const presignedResponse = await fetch('/api/upload-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -57,26 +55,22 @@ export function ImageSelection({ onComplete }) {
         throw new Error('Errore generazione URL');
       }
 
-      const { presignedUrl, publicUrl, s3Key } = await presignedResponse.json();
+      const { presignedUrl, s3Key } = await presignedResponse.json();
 
-      // 2. Upload diretto a S3
       await uploadToS3(file, presignedUrl);
 
-      // 3. Aggiorna lo stato locale
       const previewUrl = URL.createObjectURL(file);
       const newPhotos = [...photos];
       newPhotos[index] = {
         file,
         preview: previewUrl,
-        publicUrl,
         s3Key,
         uploaded: true
       };
       
       setPhotos(newPhotos);
       
-      // Tieni traccia delle immagini caricate
-      setUploadedImages(prev => [...prev, { publicUrl, s3Key }]);
+      setUploadedImages(prev => [...prev, { s3Key }]);
 
     } catch (error) {
       console.error('Errore upload:', error);
@@ -95,7 +89,6 @@ export function ImageSelection({ onComplete }) {
     }
     
     if (photo?.s3Key) {
-      // Rimuovi dalla lista delle immagini caricate
       setUploadedImages(prev => prev.filter(img => img.s3Key !== photo.s3Key));
     }
     
@@ -119,13 +112,11 @@ export function ImageSelection({ onComplete }) {
     setIsUploading(true);
 
     try {
-      // Salva nel database
       const response = await fetch('/api/save-images', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           images: uploadedPhotos.map(photo => ({
-            publicUrl: photo.publicUrl,
             s3Key: photo.s3Key,
           }))
         }),
@@ -138,7 +129,6 @@ export function ImageSelection({ onComplete }) {
       const result = await response.json();
       console.log('Immagini salvate:', result);
 
-      // Callback o redirect
       if (onComplete) {
         onComplete(uploadedPhotos);
       } else {
@@ -157,7 +147,6 @@ export function ImageSelection({ onComplete }) {
 
   return (
     <div className="flex flex-col h-screen bg-white">
-      {/* Header */}
       <div className="flex items-center px-4 py-4 border-b">
         <button 
           onClick={() => router.back()} 
@@ -168,14 +157,11 @@ export function ImageSelection({ onComplete }) {
         <h1 className="text-xl font-semibold">Aggiungi Foto</h1>
       </div>
 
-      {/* Content */}
       <div className="flex-1 px-6 py-8">
-        {/* Photo Grid */}
         <div className="grid grid-cols-3 gap-4 mb-8">
           {photos.map((photo, index) => (
             <div key={index} className="aspect-square relative">
               {photo ? (
-                // Photo preview
                 <div className="relative w-full h-full rounded-xl overflow-hidden bg-gray-100">
                   <Image
                     src={photo.preview}
@@ -203,7 +189,6 @@ export function ImageSelection({ onComplete }) {
                   )}
                 </div>
               ) : (
-                // Add photo button
                 <label className="w-full h-full border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center cursor-pointer hover:border-purple-500 hover:bg-purple-50 transition-colors">
                   <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
                     <HiPlus className="w-6 h-6 text-white" />
@@ -221,7 +206,6 @@ export function ImageSelection({ onComplete }) {
           ))}
         </div>
 
-        {/* Info Text */}
         <div className="text-center text-gray-600 mb-8">
           <p className="text-sm mb-2">
             {uploadedCount < 2 
@@ -235,7 +219,6 @@ export function ImageSelection({ onComplete }) {
         </div>
       </div>
 
-      {/* Continue Button */}
       <div className="px-6 pb-8">
         <button
           onClick={handleContinue}

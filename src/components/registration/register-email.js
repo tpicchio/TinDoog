@@ -50,7 +50,6 @@ export function RegisterEmail({ value = '', onNext }) {
       return;
     }
 
-    // Controlla se l'email esiste già
     const exists = await checkEmailExists(email);
     
     if (exists) {
@@ -68,14 +67,12 @@ export function RegisterEmail({ value = '', onNext }) {
 
   return (
 	<>
-	  {/* Title */}
 	  <div className="flex justify-center">
 		<h1 className="text-4xl font-bold text-black text-center">
 		  Inserisci la tua email
 		</h1>
 	  </div>
 
-	  {/* Email input group */}
 	  <div className="mt-10">
 		<input
 		  type="email"
@@ -88,7 +85,6 @@ export function RegisterEmail({ value = '', onNext }) {
 		  Inserisci l'email che vuoi utilizzare per accedere a Tindoog.
 		</p>
 		
-		{/* Messaggio di errore */}
 		{error && (
 		  <div className="mt-3 mb-8">
 		    {emailExists ? (
@@ -109,7 +105,6 @@ export function RegisterEmail({ value = '', onNext }) {
 		)}
 	  </div>
 
-	  {/* Continue button */}
 	  <div className="mt-auto pb-4">
 		<button
 		  type="button"

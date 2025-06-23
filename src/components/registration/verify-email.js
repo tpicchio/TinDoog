@@ -8,7 +8,6 @@ export function VerifyEmail({ email, onNext }) {
   const [otpSent, setOtpSent] = useState(false);
   const hasInitialized = useRef(false);
 
-  // Invia OTP automaticamente quando il componente viene montato
   useEffect(() => {
     if (email && !hasInitialized.current) {
       hasInitialized.current = true;
@@ -34,7 +33,6 @@ export function VerifyEmail({ email, onNext }) {
 
       if (response.ok) {
         setOtpSent(true);
-        // In sviluppo, mostra il codice nella console per debug
         if (data.otp) {
           console.log('DEBUG - Codice OTP:', data.otp);
         }
@@ -69,7 +67,7 @@ export function VerifyEmail({ email, onNext }) {
       const data = await response.json();
 
       if (response.ok) {
-        onNext(); // Procedi al passo successivo
+        onNext();
       } else {
         setError(data.message || 'Codice non valido');
       }
@@ -81,14 +79,12 @@ export function VerifyEmail({ email, onNext }) {
   };
   return (
 	<>
-	  {/* Title */}
 	  <div className="flex justify-center">
 		<h1 className="text-4xl font-bold text-black text-center">
 		  Verifica la tua email
 		</h1>
 	  </div>
 
-	  {/* Verification instructions */}
 	  <div className="mt-10">
 		{isSending ? (
 		  <p className="text-lg text-gray-700">
@@ -118,12 +114,10 @@ export function VerifyEmail({ email, onNext }) {
 		    Se non hai ricevuto il codice, controlla la tua cartella spam.
 		  </p>
 		  
-		  {/* Messaggio di errore */}
 		  {error && (
 		    <p className="text-sm text-red-500 mt-2">{error}</p>
 		  )}
 		  
-		  {/* Pulsante per reinviare OTP */}
 		  {otpSent && !isSending && (
 		    <button
 		      onClick={sendOTP}
@@ -135,7 +129,6 @@ export function VerifyEmail({ email, onNext }) {
 		</div>
 	  </div>
 
-	  {/* Continue button */}
 	  <div className="mt-auto pb-4">
 		<button
 		  type="button"

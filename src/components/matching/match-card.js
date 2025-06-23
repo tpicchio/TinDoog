@@ -1,19 +1,16 @@
-import { HiX, HiHeart, HiInformationCircle, HiChevronLeft, HiChevronRight } from 'react-icons/hi';
+import { HiX, HiHeart, HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import { useState, useEffect } from 'react';
 
 export function MatchCard({ dog, onLike, onPass, isLoading }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
-  // Prepara array delle immagini (massimo 4)
   const images = dog.images && dog.images.length > 0 ? dog.images.slice(0, 4) : [];
   const hasMultipleImages = images.length > 1;
 
-  // Reset dell'indice quando cambia il cane
   useEffect(() => {
     setCurrentImageIndex(0);
   }, [dog.id]);
 
-  // Gestione dei tasti freccia
   useEffect(() => {
     const handleKeyPress = (event) => {
       if (!hasMultipleImages) return;
@@ -45,7 +42,6 @@ export function MatchCard({ dog, onLike, onPass, isLoading }) {
 
   return (
     <div className="relative w-full h-full bg-white rounded-2xl shadow-lg overflow-hidden">
-      {/* Immagine del cane */}
       <div className="relative w-full h-full bg-gradient-to-br from-green-400 to-blue-500">
         {images.length > 0 ? (
           <>
@@ -55,7 +51,6 @@ export function MatchCard({ dog, onLike, onPass, isLoading }) {
               className="w-full h-full object-cover"
             />
             
-            {/* Frecce di navigazione */}
             {hasMultipleImages && (
               <>
                 <button
@@ -76,7 +71,6 @@ export function MatchCard({ dog, onLike, onPass, isLoading }) {
               </>
             )}
 
-            {/* Indicatori delle foto */}
             {hasMultipleImages && (
               <div className="absolute top-4 left-1/2 transform -translate-x-1/2 flex gap-1">
                 {images.map((_, index) => (
@@ -95,7 +89,6 @@ export function MatchCard({ dog, onLike, onPass, isLoading }) {
             )}
           </>
         ) : (
-          // Placeholder con gradiente colorato
           <div className="w-full h-full flex items-center justify-center">
             <div className="text-center text-white">
               <div className="text-6xl mb-4">🐕</div>
@@ -104,22 +97,20 @@ export function MatchCard({ dog, onLike, onPass, isLoading }) {
           </div>
         )}
         
-        {/* Overlay con informazioni */}
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
           <div className="text-white">
-            <div className="flex items-baseline gap-2 mb-1">
-              <h2 className="text-3xl font-bold">{dog.name}</h2>
-              <span className="text-xl">{dog.age}</span>
+            <div className="flex items-baseline gap-2 mb-2">
+              <h2 className="text-4xl font-bold">{dog.name}</h2>
+              <span className="text-2xl">{dog.age}</span>
             </div>
-            <p className="text-sm opacity-90 mb-1">{dog.breed} • {dog.gender}</p>
-            <p className="text-sm opacity-75">{dog.bio}</p>
-            <p className="text-xs opacity-60 mt-2">
+            <p className="text-lg opacity-90 mb-2">{dog.breed || 'Razza non specificata'} • {dog.gender}</p>
+            <p className="text-base opacity-80">{dog.bio}</p>
+            <p className="text-sm opacity-70 mt-3">
               📍 {Math.round(dog.distance)} km away
             </p>
           </div>
         </div>
 
-        {/* Action buttons integrati nell'immagine */}
         <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-8">
           <button
             onClick={onPass}
@@ -140,15 +131,6 @@ export function MatchCard({ dog, onLike, onPass, isLoading }) {
           </button>
         </div>
 
-        {/* Info button */}
-        <button
-          className="absolute top-4 right-4 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center hover:bg-black/70 transition-colors"
-          aria-label="Informazioni"
-        >
-          <HiInformationCircle className="text-white text-lg" />
-        </button>
-
-        {/* Loading overlay */}
         {isLoading && (
           <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
             <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

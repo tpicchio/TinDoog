@@ -26,7 +26,7 @@ export function Login() {
       if (result?.error) {
         setError('Email o password non corretti')
       } else {
-        router.push('/dashboard') // Reindirizza alla home
+        router.push('/dashboard') 
       }
     } catch (error) {
       setError('Errore durante il login')
@@ -50,14 +50,11 @@ export function Login() {
 			</button>
 		</div>
 
-        {/* Titolo */}
         <h1 className="text-2xl font-bold text-gray-900 mb-8">
           Inserisci i tuoi dati
         </h1>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Campo Email */}
           <div>
             <input
               type="email"
@@ -69,7 +66,6 @@ export function Login() {
             />
           </div>
 
-          {/* Campo Password */}
           <div>
             <input
               type="password"
@@ -81,14 +77,12 @@ export function Login() {
             />
           </div>
 
-          {/* Messaggio di errore */}
           {error && (
             <div className="text-red-500 text-sm text-center">
               {error}
             </div>
           )}
 
-          {/* Bottone Accedi */}
           <button
             type="submit"
             disabled={isLoading}
@@ -98,7 +92,6 @@ export function Login() {
           </button>
         </form>
 
-        {/* Link registrazione */}
         <div className="mt-6 text-center">
           <span className="text-gray-600">Non hai un account? </span>
           <button

@@ -60,14 +60,12 @@ export function LocationPermission({ onNext, onCancel }) {
 
   return (
     <>
-      {/* Title */}
       <div className="flex justify-center">
         <h1 className="text-4xl font-bold text-black text-center">
           Accesso alla posizione
         </h1>
       </div>
 
-      {/* Icon and explanation */}
       <div className="mt-10 text-center">
         <div className="flex justify-center mb-6">
           <HiLocationMarker className="text-6xl text-purple-500" />
@@ -99,14 +97,12 @@ export function LocationPermission({ onNext, onCancel }) {
         </div>
       </div>
 
-      {/* Error message */}
       {error && (
         <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-sm text-red-600 text-center">{error}</p>
         </div>
       )}
 
-      {/* Buttons */}
       <div className="mt-auto pb-4 space-y-3">
         <button
           type="button"

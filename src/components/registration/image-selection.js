@@ -28,13 +28,12 @@ export function ImageSelectionRegistration({ onNext }) {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Validazione file
     if (!file.type.startsWith('image/')) {
       alert('Seleziona solo file immagine');
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+    if (file.size > 5 * 1024 * 1024) { 
       alert('Immagine troppo grande (max 5MB)');
       return;
     }
@@ -42,14 +41,13 @@ export function ImageSelectionRegistration({ onNext }) {
     setIsUploading(true);
 
     try {
-      // 1. Richiedi presigned URL per registrazione
       const presignedResponse = await fetch('/api/upload-image-registration', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fileName: file.name,
           fileType: file.type,
-          tempUserId: sessionId // Usa lo stesso sessionId per tutti i file
+          tempUserId: sessionId
         }),
       });
 
@@ -57,31 +55,26 @@ export function ImageSelectionRegistration({ onNext }) {
         throw new Error('Errore generazione URL');
       }
 
-      const { presignedUrl, publicUrl, s3Key, sessionId: newSessionId } = await presignedResponse.json();
+      const { presignedUrl, s3Key, sessionId: newSessionId } = await presignedResponse.json();
 
-      // Salva il sessionId per i prossimi upload
       if (!sessionId && newSessionId) {
         setSessionId(newSessionId);
       }
 
-      // 2. Upload diretto a S3
       await uploadToS3(file, presignedUrl);
 
-      // 3. Aggiorna lo stato locale
       const previewUrl = URL.createObjectURL(file);
       const newPhotos = [...photos];
       newPhotos[index] = {
         file,
         preview: previewUrl,
-        publicUrl,
         s3Key,
         uploaded: true
       };
       
       setPhotos(newPhotos);
       
-      // Tieni traccia delle immagini caricate
-      setUploadedImages(prev => [...prev, { publicUrl, s3Key }]);
+      setUploadedImages(prev => [...prev, { s3Key }]);
 
     } catch (error) {
       console.error('Errore upload:', error);
@@ -100,7 +93,6 @@ export function ImageSelectionRegistration({ onNext }) {
     }
     
     if (photo?.s3Key) {
-      // Rimuovi dalla lista delle immagini caricate
       setUploadedImages(prev => prev.filter(img => img.s3Key !== photo.s3Key));
     }
     
@@ -116,9 +108,7 @@ export function ImageSelectionRegistration({ onNext }) {
       return;
     }
 
-    // Passa le immagini al prossimo step
     onNext(uploadedPhotos.map(photo => ({
-      publicUrl: photo.publicUrl,
       s3Key: photo.s3Key,
     })));
   };
@@ -127,7 +117,6 @@ export function ImageSelectionRegistration({ onNext }) {
 
   return (
     <div className="space-y-6">
-      {/* Titolo */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
           Aggiungi le tue foto
@@ -137,12 +126,10 @@ export function ImageSelectionRegistration({ onNext }) {
         </p>
       </div>
 
-      {/* Photo Grid */}
       <div className="grid grid-cols-3 gap-3">
         {photos.map((photo, index) => (
           <div key={index} className="aspect-square relative">
             {photo ? (
-              // Photo preview
               <div className="relative w-full h-full rounded-lg overflow-hidden bg-gray-100">
                 <Image
                   src={photo.preview}
@@ -170,7 +157,6 @@ export function ImageSelectionRegistration({ onNext }) {
                 )}
               </div>
             ) : (
-              // Add photo button
               <label className="w-full h-full border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-purple-500 hover:bg-purple-50 transition-colors">
                 <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
                   <HiPlus className="w-4 h-4 text-white" />
@@ -188,7 +174,6 @@ export function ImageSelectionRegistration({ onNext }) {
         ))}
       </div>
 
-      {/* Info Text */}
       <div className="text-center">
         <p className="text-sm text-gray-600 mb-1">
           {uploadedCount < 2 
@@ -201,7 +186,6 @@ export function ImageSelectionRegistration({ onNext }) {
         </p>
       </div>
 
-      {/* Continue Button */}
       <div className="flex justify-center">
         <button
           onClick={handleNext}

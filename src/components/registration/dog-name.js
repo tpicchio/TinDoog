@@ -13,14 +13,12 @@ export function DogName({ value = '', onNext }) {
 
   return (
     <>
-      {/* Titolo principale */}
       <div className="flex justify-center">
         <h1 className="text-4xl font-bold text-black text-center">
           Nome del tuo cane
         </h1>
       </div>
 
-      {/* Gruppo per input e testo di aiuto */}
       <div className="mt-10">
         <input
           type="text"
@@ -34,7 +32,6 @@ export function DogName({ value = '', onNext }) {
         </p>
       </div>
 
-      {/* Pulsante "CONTINUE" */}
       <div className="mt-auto pb-4">
         <button
           type="button"

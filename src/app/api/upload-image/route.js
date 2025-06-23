@@ -15,20 +15,16 @@ export async function POST(request) {
 
     const { fileName, fileType } = await request.json();
 
-    // Validazione tipo file
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(fileType)) {
       return NextResponse.json({ error: 'Tipo file non supportato' }, { status: 400 });
     }
 
-    // Genera UUID per il nome file
     const fileExtension = fileName.split('.').pop();
     const uniqueFileName = `${uuidv4()}.${fileExtension}`;
     
-    // Percorso nel bucket: users/{userId}/{uniqueFileName}
     const s3Key = `users/${session.user.id}/${uniqueFileName}`;
 
-    // Genera presigned URL per upload
     const command = new PutObjectCommand({
       Bucket: AWS_CONFIG.BUCKET_NAME,
       Key: s3Key,
@@ -40,15 +36,11 @@ export async function POST(request) {
     });
 
     const presignedUrl = await getSignedUrl(s3Client, command, { 
-      expiresIn: 300 // 5 minuti
+      expiresIn: 300 
     });
-
-    // URL pubblico per accesso
-    const publicUrl = `https://${AWS_CONFIG.BUCKET_NAME}.s3.${AWS_CONFIG.REGION}.amazonaws.com/${s3Key}`;
 
     return NextResponse.json({
       presignedUrl,
-      publicUrl,
       s3Key,
       uniqueFileName
     });

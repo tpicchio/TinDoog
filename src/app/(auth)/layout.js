@@ -1,4 +1,3 @@
-// src/app/(auth)/layout.js
 'use client'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
@@ -9,24 +8,24 @@ export default function AuthLayout({ children }) {
   const { data: session, status } = useSession()
   const router = useRouter()
 
-  // Reindirizza alla dashboard se già autenticato
+  // Redirect to dashboard if already authenticated
   useEffect(() => {
     if (status === 'authenticated') {
       router.push('/dashboard')
     }
   }, [status, router])
 
-  // Mostra loading durante il controllo auth
+  // Show loading during auth check
   if (status === 'loading') {
-    return <LoadingScreen message="Caricamento..." />
+    return <LoadingScreen message="Loading..." />
   }
 
-  // Reindirizza se già autenticato
+  // Redirect if already authenticated
   if (status === 'authenticated') {
     return null
   }
 
-  // Renderizza le pagine solo se NON autenticato
+  // Render pages only if NOT authenticated
   return (
     <div className="min-h-screen bg-white">
       {children}

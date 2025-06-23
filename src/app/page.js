@@ -13,7 +13,6 @@ export default function Home() {
 	const { data: session, status } = useSession();
 	const router = useRouter();
 
-	// Reindirizza se l'utente è già loggato
 	useEffect(() => {
 		if (status === 'authenticated') {
 			router.push('/dashboard');

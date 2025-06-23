@@ -7,10 +7,8 @@ import { s3Client, AWS_CONFIG } from '@/lib/aws-config';
 
 const prisma = new PrismaClient();
 
-// Funzione per generare un presigned URL fresco
 async function generateFreshPresignedUrl(s3Key) {
   if (!s3Client) {
-    // Se AWS non è configurato, restituisci un placeholder colorato
     const colors = ['bg-red-300', 'bg-blue-300', 'bg-green-300', 'bg-yellow-300', 'bg-purple-300', 'bg-pink-300']
     const randomColor = colors[Math.floor(Math.random() * colors.length)]
     return `https://via.placeholder.com/300x400/${randomColor.replace('bg-', '').replace('-300', '')}/white?text=Photo`
@@ -22,15 +20,13 @@ async function generateFreshPresignedUrl(s3Key) {
       Key: s3Key,
     })
     
-    // Genera URL valido per 15 minuti (presigned URL di breve durata)
     const presignedUrl = await getSignedUrl(s3Client, command, {
-      expiresIn: 900, // 15 minuti
+      expiresIn: 900,
     })
     
     return presignedUrl
   } catch (error) {
     console.error('Errore nella generazione presigned URL:', error)
-    // Fallback a placeholder in caso di errore
     return 'https://via.placeholder.com/300x400/gray/white?text=Error'
   }
 }
@@ -51,12 +47,10 @@ export async function POST(request) {
       }, { status: 400 });
     }
 
-    // Elimina le immagini esistenti dell'utente
     await prisma.userImage.deleteMany({
       where: { userId: parseInt(session.user.id) }
     });
 
-    // Genera presigned URL per ogni immagine e salva nel database
     const imagePromises = images.map(async (image) => {
       const presignedUrl = await generateFreshPresignedUrl(image.s3Key);
       return {
@@ -68,7 +62,6 @@ export async function POST(request) {
 
     const imagesWithPresignedUrls = await Promise.all(imagePromises);
 
-    // Salva le nuove immagini con presigned URL
     const savedImages = await prisma.userImage.createMany({
       data: imagesWithPresignedUrls
     });

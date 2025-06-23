@@ -3,6 +3,12 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import { PrismaClient } from '@/generated/prisma'
 import bcrypt from 'bcryptjs'
 
+/**
+ * NextAuth.js authentication route configuration
+ * Handles user authentication using credentials (email/password) with Prisma database
+ * Provides JWT-based sessions and custom sign-in page routing
+ */
+
 const prisma = new PrismaClient()
 
 export const authOptions = {
