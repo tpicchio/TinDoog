@@ -1,48 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/route';
-import { PrismaClient } from '@/generated/prisma';
-import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-
-const prisma = new PrismaClient();
-
-const isAwsConfigured = () => {
-  const required = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_REGION', 'AWS_S3_BUCKET_NAME']
-  return required.every(key => process.env[key] && process.env[key].trim() !== '')
-}
-
-const s3Client = isAwsConfigured() ? new S3Client({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-}) : null
-
-async function generateFreshPresignedUrl(s3Key) {
-  if (!s3Client) {
-    const colors = ['bg-red-300', 'bg-blue-300', 'bg-green-300', 'bg-yellow-300', 'bg-purple-300', 'bg-pink-300']
-    const randomColor = colors[Math.floor(Math.random() * colors.length)]
-    return `https://via.placeholder.com/300x400/${randomColor.replace('bg-', '').replace('-300', '')}/white?text=Photo`
-  }
-
-  try {
-    const command = new GetObjectCommand({
-      Bucket: process.env.AWS_S3_BUCKET_NAME,
-      Key: s3Key,
-    })
-    
-    const presignedUrl = await getSignedUrl(s3Client, command, {
-      expiresIn: 900,
-    })
-    
-    return presignedUrl
-  } catch (error) {
-    console.error('Errore nella generazione presigned URL:', error)
-    return 'https://via.placeholder.com/300x400/gray/white?text=Error'
-  }
-}
+import { prisma } from "@/lib/prisma"
+import { generateMultiplePresignedUrls } from '@/lib/s3';
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371;
@@ -126,27 +86,32 @@ export async function POST(request) {
       )
       
       if (distance <= 50) {
-        const freshImages = []
-        for (const image of user.images) {
-          try {
-            const freshUrl = await generateFreshPresignedUrl(image.s3Key)
-            freshImages.push(freshUrl)
-          } catch (error) {
-            console.error(`Errore generazione URL per immagine ${image.s3Key}:`, error)
-            freshImages.push('https://via.placeholder.com/300x400/gray/white?text=Error')
-          }
+        try {
+          const freshImages = await generateMultiplePresignedUrls(user.images, 900);
+          
+          matchesWithFreshUrls.push({
+            id: user.id,
+            name: user.name,
+            age: user.age,
+            breed: user.breed,
+            gender: user.gender,
+            email: user.email,
+            images: freshImages,
+            distance: Math.round(distance * 10) / 10
+          });
+        } catch (error) {
+          console.error(`Error processing images for user ${user.id}:`, error);
+          matchesWithFreshUrls.push({
+            id: user.id,
+            name: user.name,
+            age: user.age,
+            breed: user.breed,
+            gender: user.gender,
+            email: user.email,
+            images: ['https://via.placeholder.com/300x400/gray/white?text=Error'],
+            distance: Math.round(distance * 10) / 10
+          });
         }
-        
-        matchesWithFreshUrls.push({
-          id: user.id,
-          name: user.name,
-          age: user.age,
-          breed: user.breed,
-          gender: user.gender,
-          email: user.email,
-          images: freshImages,
-          distance: distance
-        })
       }
     }
     
@@ -163,7 +128,5 @@ export async function POST(request) {
       { error: 'Errore interno del server' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }

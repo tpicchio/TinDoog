@@ -1,46 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]/route';
-import { PrismaClient } from '@/generated/prisma';
-import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { prisma } from "@/lib/prisma"
+import { s3Client, generatePresignedUrl } from '@/lib/s3';
+import { AWS_CONFIG } from '@/lib/aws-config';
 
-const prisma = new PrismaClient();
-
-const isAwsConfigured = () => {
-  const required = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_REGION', 'AWS_S3_BUCKET_NAME']
-  return required.every(key => process.env[key] && process.env[key].trim() !== '')
-}
-
-const s3Client = isAwsConfigured() ? new S3Client({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-}) : null
-
-async function generatePresignedUrl(s3Key) {
-  if (!s3Client) {
-    return `https://via.placeholder.com/400x400/6366f1/white?text=Profile`
-  }
-
-  try {
-    const command = new GetObjectCommand({
-      Bucket: process.env.AWS_S3_BUCKET_NAME,
-      Key: s3Key,
-    })
-    
-    return await getSignedUrl(s3Client, command, {
-      expiresIn: 900,
-    })
-  } catch (error) {
-    console.error('Errore nella generazione presigned URL:', error)
-    return `https://via.placeholder.com/400x400/gray/white?text=Error`
-  }
-}
-
-export async function GET(request) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     
@@ -60,7 +26,7 @@ export async function GET(request) {
       });
     }
 
-    const profileImageUrl = await generatePresignedUrl(user.profileImageUrl);
+    const profileImageUrl = await generatePresignedUrl(user.profileImageUrl, 900, 'profile');
 
     return NextResponse.json({
       success: true,
@@ -73,8 +39,6 @@ export async function GET(request) {
       { error: 'Errore interno del server' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -115,7 +79,7 @@ export async function PUT(request) {
     const s3Key = `profile-images/${userId}/profile.${fileExtension}`;
 
     const uploadCommand = new PutObjectCommand({
-      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Bucket: AWS_CONFIG.BUCKET_NAME,
       Key: s3Key,
       Body: Buffer.from(await file.arrayBuffer()),
       ContentType: file.type,
@@ -127,12 +91,7 @@ export async function PUT(request) {
 
     await s3Client.send(uploadCommand);
 
-    const updatedUser = await prisma.user.update({
-      where: { id: parseInt(userId) },
-      data: { profileImageUrl: s3Key }
-    });
-
-    const presignedUrl = await generatePresignedUrl(s3Key);
+    const presignedUrl = await generatePresignedUrl(s3Key, 900, 'profile');
 
     return NextResponse.json({
       success: true,
@@ -146,8 +105,6 @@ export async function PUT(request) {
       { error: 'Errore durante il caricamento' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -176,7 +133,7 @@ export async function DELETE(request) {
     if (s3Client) {
       try {
         const deleteCommand = new DeleteObjectCommand({
-          Bucket: process.env.AWS_S3_BUCKET_NAME,
+          Bucket: AWS_CONFIG.BUCKET_NAME,
           Key: user.profileImageUrl,
         });
         await s3Client.send(deleteCommand);
@@ -201,7 +158,5 @@ export async function DELETE(request) {
       { error: 'Errore durante la rimozione' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }

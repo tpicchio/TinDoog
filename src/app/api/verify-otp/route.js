@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@/generated/prisma';
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma"
 
 export async function POST(request) {
   try {
@@ -46,7 +44,5 @@ export async function POST(request) {
       { message: 'Errore durante la verifica' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }
