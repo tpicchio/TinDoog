@@ -1,4 +1,9 @@
+
 # TinDoog 🐕💜
+
+> **Progetto personale realizzato per imparare e consolidare lo stack Next.js, NextAuth.js, Prisma, TailwindCSS e le best practice di sviluppo web moderno.**
+>
+> L'app è stata sviluppata come portfolio da mostrare su LinkedIn per dimostrare le mie competenze fullstack.
 
 Un'app di incontri per cani costruita con Next.js, NextAuth.js, Prisma e SQLite.
 
@@ -45,6 +50,7 @@ npm run dev
 
 Apri [http://localhost:3000](http://localhost:3000) nel browser.
 
+
 ## 🔧 Tech Stack
 
 - **Frontend**: Next.js 15, React, TailwindCSS
@@ -52,7 +58,10 @@ Apri [http://localhost:3000](http://localhost:3000) nel browser.
 - **Database**: SQLite con Prisma ORM
 - **Autenticazione**: NextAuth.js con Credentials Provider
 - **Email**: Resend per invio OTP
+- **Gestione immagini**: Upload immagini profilo, salvataggio su S3 (se configurato)
+- **Sistema Match**: logica di matching tra utenti
 - **Styling**: TailwindCSS
+
 
 ## 📱 Funzionalità
 
@@ -60,7 +69,23 @@ Apri [http://localhost:3000](http://localhost:3000) nel browser.
 - ✅ Login/Logout con sessioni sicure
 - ✅ Dashboard protetta
 - ✅ Validazione email esistente
+- ✅ Sistema di matching tra utenti
+- ✅ Caricamento e gestione immagini profilo
 - ✅ Design responsive con tema viola
+## 🎯 Cosa ho imparato
+
+- Progettare e sviluppare un'app fullstack moderna con Next.js 15
+- Gestire autenticazione sicura con NextAuth.js e JWT
+- Implementare un sistema di verifica email OTP
+- Gestire upload e salvataggio immagini (S3 ready)
+- Creare un sistema di matching tra utenti
+- Utilizzare Prisma ORM e gestire migrazioni database
+- Applicare best practice di sicurezza (hash password, validazione input, protezione route)
+- Deploy su Vercel e gestione variabili ambiente
+
+---
+
+Se ti piace il progetto, puoi trovarlo anche sul mio [LinkedIn](https://www.linkedin.com/)!
 
 ## 🛡️ Sicurezza
 
