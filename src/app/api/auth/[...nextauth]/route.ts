@@ -1,7 +1,7 @@
-import NextAuth from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
-import { PrismaClient } from '@/generated/prisma'
-import bcrypt from 'bcryptjs'
+import NextAuth, { type NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 /**
  * NextAuth.js authentication route configuration
@@ -9,50 +9,50 @@ import bcrypt from 'bcryptjs'
  * Provides JWT-based sessions and custom sign-in page routing
  */
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: 'credentials',
+      name: "credentials",
       credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' }
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null
+          return null;
         }
 
         const user = await prisma.user.findUnique({
           where: {
-            email: credentials.email
-          }
-        })
+            email: credentials.email,
+          },
+        });
 
         if (!user) {
-          return null
+          return null;
         }
 
         const isPasswordValid = await bcrypt.compare(
           credentials.password,
-          user.password
-        )
+          user.password,
+        );
 
         if (!isPasswordValid) {
-          return null
+          return null;
         }
 
         return {
-          id: user.id,
+          id: String(user.id),
           email: user.email,
           name: user.name,
-        }
-      }
-    })
+        };
+      },
+    }),
   ],
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -62,15 +62,18 @@ export const authOptions = {
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id;
+      session.user = {
+        ...session.user,
+        id: token.id ? String(token.id) : "",
+      };
       return session;
     },
   },
   pages: {
-    signIn: '/login',
+    signIn: "/login",
   },
-}
+};
 
-const handler = NextAuth(authOptions)
+const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST };
